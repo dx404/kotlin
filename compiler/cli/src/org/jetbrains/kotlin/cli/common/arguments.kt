@@ -61,6 +61,16 @@ fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, messageC
     if (isK2) {
         val isKaptUsed = arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
         if (isKaptUsed) {
+            if (arguments.useKapt4) {
+                if (!arguments.suppressVersionWarnings) {
+                    messageCollector.report(
+                        CompilerMessageSeverity.STRONG_WARNING,
+                        "Kapt 4 is still experimental.\nUse with caution."
+                    )
+                }
+                return
+            }
+
             if (!arguments.suppressVersionWarnings) {
                 messageCollector.report(
                     CompilerMessageSeverity.STRONG_WARNING,
