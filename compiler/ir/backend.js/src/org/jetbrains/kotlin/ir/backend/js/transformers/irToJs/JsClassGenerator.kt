@@ -30,8 +30,10 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.toSmartList
 
 class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationContext) {
+    private val backendContext = context.staticContext.backendContext
+
     private val perFile = context.staticContext.isPerFile
-    private val es6mode = context.staticContext.backendContext.es6mode
+    private val es6mode = backendContext.es6mode
 
     private val className = context.getNameForClass(irClass)
     private val baseClass: IrType? = irClass.superTypes.firstOrNull { !it.classifierOrFail.isInterface }
@@ -56,6 +58,9 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private val jsUndefined by lazy(LazyThreadSafetyMode.NONE) { jsUndefined(context.staticContext) }
+
+    private val IrClass.shouldHaveFullReflectionInfo: Boolean
+        get() = !context.staticContext.shouldOptimize || backendContext.mapping.classesWithExtendedMetadata[this] == true
 
     fun generate(): JsStatement {
         return generateClassBlock().butIf(perFile) { it.wrapInFunction() }
@@ -153,7 +158,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
                 if (
                     property.isFakeOverride &&
-                    !property.isAllowedFakeOverriddenDeclaration(context.staticContext.backendContext)
+                    !property.isAllowedFakeOverriddenDeclaration(backendContext)
                 )
                     continue
 
@@ -172,8 +177,6 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
                 val overriddenSymbols = property.getter?.overriddenSymbols.orEmpty()
 
-                val backendContext = context.staticContext.backendContext
-
                 // Don't generate `defineProperty` if the property overrides a property from an exported class,
                 // because we've already generated `defineProperty` for the base class property.
                 // In other words, we only want to generate `defineProperty` once for each property.
@@ -186,14 +189,14 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
                 val getterOverridesExternal = property.getter?.overridesExternal() == true
                 val overriddenExportedGetter = !property.getter?.overriddenSymbols.isNullOrEmpty() &&
-                        property.getter?.isOverriddenExported(context.staticContext.backendContext) == true
+                        property.getter?.isOverriddenExported(backendContext) == true
 
-                val noOverriddenExportedSetter = property.setter?.isOverriddenExported(context.staticContext.backendContext) == false
+                val noOverriddenExportedSetter = property.setter?.isOverriddenExported(backendContext) == false
 
                 val needsOverride = (overriddenExportedGetter && noOverriddenExportedSetter) ||
-                        property.isAllowedFakeOverriddenDeclaration(context.staticContext.backendContext)
+                        property.isAllowedFakeOverriddenDeclaration(backendContext)
 
-                if (irClass.isExported(context.staticContext.backendContext) &&
+                if (irClass.isExported(backendContext) &&
                     (overriddenSymbols.isEmpty() || needsOverride) ||
                     hasOverriddenExportedInterfaceProperties ||
                     getterOverridesExternal ||
@@ -215,7 +218,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     //     });
 
                     val getterForwarder = property.getter
-                        .takeIf { it.shouldExportAccessor(context.staticContext.backendContext) }
+                        .takeIf { it.shouldExportAccessor(backendContext) }
                         .getOrGenerateIfFinalOrEs6Mode {
                             propertyAccessorForwarder("getter forwarder") {
                                 JsReturn(JsInvocation(it))
@@ -223,7 +226,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                         }
 
                     val setterForwarder = property.setter
-                        .takeIf { it.shouldExportAccessor(context.staticContext.backendContext) }
+                        .takeIf { it.shouldExportAccessor(backendContext) }
                         .getOrGenerateIfFinalOrEs6Mode {
                             val setterArgName = JsName("value", false)
                             propertyAccessorForwarder("setter forwarder") {
@@ -268,7 +271,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun IrSimpleFunction.isDefinedInsideExportedInterface(): Boolean {
         if (isJsExportIgnore() || correspondingPropertySymbol?.owner?.isJsExportIgnore() == true) return false
-        return (!isFakeOverride && parentClassOrNull.isExportedInterface(context.staticContext.backendContext)) ||
+        return (!isFakeOverride && parentClassOrNull.isExportedInterface(backendContext)) ||
                 overriddenSymbols.any { it.owner.isDefinedInsideExportedInterface() }
     }
 
@@ -283,7 +286,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun IrSimpleFunction.generateAssignmentIfMangled(memberName: JsName) {
         if (
-            irClass.isExported(context.staticContext.backendContext) &&
+            irClass.isExported(backendContext) &&
             visibility.isPublicAPI && hasMangledName() &&
             correspondingPropertySymbol == null
         ) {
@@ -372,21 +375,19 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun generateSetMetadataCall(): JsStatement {
-        val setMetadataFor = context.staticContext.backendContext.intrinsics.setMetadataForSymbol.owner
+        val setMetadataFor = backendContext.intrinsics.setMetadataForSymbol.owner
 
         val ctor = classNameRef
         val parent = baseClassRef?.takeIf { !es6mode }
         val name = generateSimpleName()
         val interfaces = generateInterfacesList()
         val metadataConstructor = getMetadataConstructor()
-        val defaultConstructor = runIf(irClass.isClass && !irClass.couldSkipFullReflection()) {
+        val defaultConstructor = runIf(irClass.isClass && irClass.shouldHaveFullReflectionInfo) {
             findDefaultConstructor()
         }
         val associatedObjectKey = generateAssociatedObjectKey()
         val associatedObjects = generateAssociatedObjects()
         val suspendArity = generateSuspendArity()
-
-        val undefined = context.staticContext.backendContext.getVoid().accept(IrElementToJsExpressionTransformer(), context)
 
         return JsInvocation(
             JsNameRef(context.getNameForStaticFunction(setMetadataFor)),
@@ -402,7 +403,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 suspendArity
             )
                 .dropLastWhile { it == null }
-                .memoryOptimizedMap { it ?: undefined }
+                .memoryOptimizedMap { it ?: jsUndefined }
         ).makeStmt()
 
     }
@@ -423,7 +424,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun getMetadataConstructor(): JsNameRef {
-        val metadataConstructorSymbol = with(context.staticContext.backendContext.intrinsics) {
+        val metadataConstructorSymbol = with(backendContext.intrinsics) {
             when {
                 irClass.isInterface -> metadataInterfaceConstructorSymbol
                 irClass.isObject -> metadataObjectConstructorSymbol
@@ -444,7 +445,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun findDefaultConstructor(): JsNameRef? {
-        return when (val defaultConstructor = context.staticContext.backendContext.findDefaultConstructorFor(irClass)) {
+        return when (val defaultConstructor = backendContext.findDefaultConstructorFor(irClass)) {
             is IrConstructor -> context.getNameForConstructor(defaultConstructor).makeRef()
             is IrSimpleFunction -> when {
                 es6mode -> JsNameRef(context.getNameForMemberFunction(defaultConstructor), classNameRef)
@@ -455,7 +456,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun generateSuspendArity(): JsArrayLiteral? {
-        val invokeFunctions = context.staticContext.backendContext.mapping.suspendArityStore[irClass] ?: return null
+        val invokeFunctions = backendContext.mapping.suspendArityStore[irClass] ?: return null
         val arity = invokeFunctions
             .map { it.valueParameters.size }
             .distinct()
@@ -473,7 +474,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             val annotationClass = annotation.symbol.owner.constructedClass
             context.getAssociatedObjectKey(annotationClass)?.let { key ->
                 annotation.associatedObject()?.let { obj ->
-                    context.staticContext.backendContext.mapping.objectToGetInstanceFunction[obj]?.let { factory ->
+                    backendContext.mapping.objectToGetInstanceFunction[obj]?.let { factory ->
                         JsPropertyInitializer(JsIntLiteral(key), context.staticContext.getNameForStaticFunction(factory).makeRef())
                     }
                 }
