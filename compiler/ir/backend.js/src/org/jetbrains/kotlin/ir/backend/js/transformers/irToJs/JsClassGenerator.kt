@@ -59,9 +59,6 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private val jsUndefined by lazy(LazyThreadSafetyMode.NONE) { jsUndefined(context.staticContext) }
 
-    private val IrClass.shouldHaveFullReflectionInfo: Boolean
-        get() = !context.staticContext.shouldOptimize || backendContext.mapping.classesWithExtendedMetadata[this] == true
-
     fun generate(): JsStatement {
         return generateClassBlock().butIf(perFile) { it.wrapInFunction() }
     }
@@ -382,7 +379,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         val name = generateSimpleName()
         val interfaces = generateInterfacesList()
         val metadataConstructor = getMetadataConstructor()
-        val defaultConstructor = runIf(irClass.isClass && irClass.shouldHaveFullReflectionInfo) {
+        val defaultConstructor = runIf(irClass.isClass) {
             findDefaultConstructor()
         }
         val associatedObjectKey = generateAssociatedObjectKey()
