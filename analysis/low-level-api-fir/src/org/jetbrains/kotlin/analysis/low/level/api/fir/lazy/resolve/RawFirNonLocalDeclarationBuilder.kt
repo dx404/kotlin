@@ -68,7 +68,11 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             scopeProvider: FirScopeProvider,
             file: KtFile,
         ): FirFile {
-            val builder = RawFirBuilder(session,scopeProvider, bodyBuildingMode = BodyBuildingMode.LAZY_BODIES)
+            val bodyBuildingMode = when (file) {
+                is KtCodeFragment -> BodyBuildingMode.NORMAL
+                else -> BodyBuildingMode.LAZY_BODIES
+            }
+            val builder = RawFirBuilder(session, scopeProvider, bodyBuildingMode)
             return builder.buildFirFile(file)
         }
 

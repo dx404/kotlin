@@ -38,10 +38,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.*
 
 internal abstract class LLFirResolvableResolveSession(
     final override val useSiteKtModule: KtModule,
@@ -134,10 +131,17 @@ internal abstract class LLFirResolvableResolveSession(
         }
 
         val nonLocalDeclaration = ktDeclaration.getNonLocalContainingOrThisDeclaration()
-            ?: buildErrorWithAttachment("Declaration should have non-local container") {
+
+        if (nonLocalDeclaration == null) {
+            if (ktDeclaration.containingFile is KtCodeFragment) {
+                return findDeclarationInSourceViaResolve(ktDeclaration)
+            }
+
+            buildErrorWithAttachment("Declaration should have non-local container") {
                 withPsiEntry("ktDeclaration", ktDeclaration, ::getModule)
                 withEntry("module", module) { it.moduleDescription }
             }
+        }
 
         if (ktDeclaration == nonLocalDeclaration) {
             val session = getResolvableSessionFor(module)
