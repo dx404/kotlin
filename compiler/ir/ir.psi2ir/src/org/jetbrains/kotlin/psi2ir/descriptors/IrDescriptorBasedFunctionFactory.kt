@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -265,12 +266,18 @@ class IrDescriptorBasedFunctionFactory(
     private fun createThisReceiver(descriptorFactory: FunctionDescriptorFactory): IrValueParameter {
         val descriptor = descriptorFactory.classReceiverParameterDescriptor()
         return irFactory.createValueParameter(
-            offset, offset, classOrigin, IrValueParameterSymbolImpl(descriptor), SpecialNames.THIS, -1,
-            typeTranslator.translateType(descriptor.type), null,
+            startOffset = offset,
+            endOffset = offset,
+            origin = classOrigin,
+            name = SpecialNames.THIS,
+            type = typeTranslator.translateType(descriptor.type),
+            isAssignable = false,
+            symbol = IrValueParameterSymbolImpl(descriptor),
+            index = UNDEFINED_PARAMETER_INDEX,
+            varargElementType = null,
             isCrossinline = false,
             isNoinline = false,
             isHidden = false,
-            isAssignable = false
         )
     }
 
@@ -310,11 +317,18 @@ class IrDescriptorBasedFunctionFactory(
                     buildSimpleType()
                 }
                 val vDeclaration = irFactory.createValueParameter(
-                    offset, offset, memberOrigin, vSymbol, Name.identifier("p$i"), i - 1, vType, null,
+                    startOffset = offset,
+                    endOffset = offset,
+                    origin = memberOrigin,
+                    name = Name.identifier("p$i"),
+                    type = vType,
+                    isAssignable = false,
+                    symbol = vSymbol,
+                    index = i - 1,
+                    varargElementType = null,
                     isCrossinline = false,
                     isNoinline = false,
                     isHidden = false,
-                    isAssignable = false
                 )
                 vDeclaration.parent = fDeclaration
                 fDeclaration.valueParameters += vDeclaration
@@ -344,8 +358,18 @@ class IrDescriptorBasedFunctionFactory(
 
     private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor): IrValueParameter = with(descriptor) {
         irFactory.createValueParameter(
-            offset, offset, memberOrigin, IrValueParameterSymbolImpl(this), name, indexOrMinusOne, toIrType(type),
-            (this as? ValueParameterDescriptor)?.varargElementType?.let(::toIrType), isCrossinline, isNoinline, false, false
+            startOffset = offset,
+            endOffset = offset,
+            origin = memberOrigin,
+            name = name,
+            type = toIrType(type),
+            isAssignable = false,
+            symbol = IrValueParameterSymbolImpl(this),
+            index = indexOrMinusOne,
+            varargElementType = (this as? ValueParameterDescriptor)?.varargElementType?.let(::toIrType),
+            isCrossinline = isCrossinline,
+            isNoinline = isNoinline,
+            isHidden = false
         ).also {
             it.parent = this@createValueParameter
         }
