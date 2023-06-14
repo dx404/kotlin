@@ -436,10 +436,14 @@ class Fir2IrClassifierStorage(
                             symbolFactory = { IrTypeParameterPublicSymbolImpl(signature) }
                         ) { symbol ->
                             irFactory.createTypeParameter(
-                                startOffset, endOffset, origin, symbol,
-                                name, if (index < 0) 0 else index,
-                                isReified,
-                                variance
+                                startOffset = startOffset,
+                                endOffset = endOffset,
+                                origin = origin,
+                                name = name,
+                                symbol = symbol,
+                                variance = variance,
+                                index = if (index < 0) 0 else index,
+                                isReified = isReified,
                             )
                         }
                     } else {
@@ -448,19 +452,27 @@ class Fir2IrClassifierStorage(
                             symbolFactory = { IrTypeParameterPublicSymbolImpl(signature) }
                         ) { symbol ->
                             irFactory.createTypeParameter(
-                                startOffset, endOffset, origin, symbol,
-                                name, if (index < 0) 0 else index,
-                                isReified,
-                                variance
+                                startOffset = startOffset,
+                                endOffset = endOffset,
+                                origin = origin,
+                                name = name,
+                                symbol = symbol,
+                                variance = variance,
+                                index = if (index < 0) 0 else index,
+                                isReified = isReified,
                             )
                         }
 
                     }
                 } ?: irFactory.createTypeParameter(
-                    startOffset, endOffset, origin, IrTypeParameterSymbolImpl(),
-                    name, if (index < 0) 0 else index,
-                    isReified,
-                    variance
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = name,
+                    symbol = IrTypeParameterSymbolImpl(),
+                    variance = variance,
+                    index = if (index < 0) 0 else index,
+                    isReified = isReified,
                 )
             }
         }
