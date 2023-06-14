@@ -126,4 +126,4 @@ public expect annotation class JsExport() {
     AnnotationTarget.TYPEALIAS
 )
 @MustBeDocumented
-annotation class ExperimentalJsReflectionCreateInstance
+public annotation class ExperimentalJsReflectionCreateInstance
