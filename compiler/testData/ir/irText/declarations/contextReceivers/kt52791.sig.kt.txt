@@ -8,14 +8,14 @@ class MyClass {
   constructor($context_receiver_0: Unit, $context_receiver_1: Int) /* primary */
   // CHECK JVM_IR:
   //   Mangled name computed from Ir:         MyClass.contextReceiverField0
-  //   Mangled name computed from Descriptor: MyClass{}contextReceiverField0#jf
+  //   Mangled name computed from Descriptor: MyClass{}contextReceiverField0
   // CHECK JS_IR NATIVE:
   //   Mangled name computed from Ir:         MyClass.contextReceiverField0
   //   Mangled name computed from Descriptor: MyClass{}contextReceiverField0
   private /* final field */ val contextReceiverField0: Unit
   // CHECK JVM_IR:
   //   Mangled name computed from Ir:         MyClass.contextReceiverField1
-  //   Mangled name computed from Descriptor: MyClass{}contextReceiverField1#jf
+  //   Mangled name computed from Descriptor: MyClass{}contextReceiverField1
   // CHECK JS_IR NATIVE:
   //   Mangled name computed from Ir:         MyClass.contextReceiverField1
   //   Mangled name computed from Descriptor: MyClass{}contextReceiverField1

@@ -58,7 +58,7 @@ class OK {
   constructor($context_receiver_0: O, k: String) /* primary */
   // CHECK JVM_IR:
   //   Mangled name computed from Ir:         OK.contextReceiverField0
-  //   Mangled name computed from Descriptor: OK{}contextReceiverField0#jf
+  //   Mangled name computed from Descriptor: OK{}contextReceiverField0
   // CHECK JS_IR NATIVE:
   //   Mangled name computed from Ir:         OK.contextReceiverField0
   //   Mangled name computed from Descriptor: OK{}contextReceiverField0

@@ -27,7 +27,7 @@ class Test {
   constructor($context_receiver_0: Context) /* primary */
   // CHECK JVM_IR:
   //   Mangled name computed from Ir:         Test.contextReceiverField0
-  //   Mangled name computed from Descriptor: Test{}contextReceiverField0#jf
+  //   Mangled name computed from Descriptor: Test{}contextReceiverField0
   // CHECK JS_IR NATIVE:
   //   Mangled name computed from Ir:         Test.contextReceiverField0
   //   Mangled name computed from Descriptor: Test{}contextReceiverField0

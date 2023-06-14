@@ -148,7 +148,7 @@ class CounterIterator : Iterator<Int> {
   constructor($context_receiver_0: CounterConfig, counter: Counter) /* primary */
   // CHECK JVM_IR:
   //   Mangled name computed from Ir:         CounterIterator.contextReceiverField0
-  //   Mangled name computed from Descriptor: CounterIterator{}contextReceiverField0#jf
+  //   Mangled name computed from Descriptor: CounterIterator{}contextReceiverField0
   // CHECK JS_IR NATIVE:
   //   Mangled name computed from Ir:         CounterIterator.contextReceiverField0
   //   Mangled name computed from Descriptor: CounterIterator{}contextReceiverField0

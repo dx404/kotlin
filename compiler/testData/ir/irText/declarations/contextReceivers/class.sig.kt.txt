@@ -8,7 +8,7 @@ class Inner {
   constructor($context_receiver_0: Outer, arg: Any) /* primary */
   // CHECK JVM_IR:
   //   Mangled name computed from Ir:         Inner.contextReceiverField0
-  //   Mangled name computed from Descriptor: Inner{}contextReceiverField0#jf
+  //   Mangled name computed from Descriptor: Inner{}contextReceiverField0
   // CHECK JS_IR NATIVE:
   //   Mangled name computed from Ir:         Inner.contextReceiverField0
   //   Mangled name computed from Descriptor: Inner{}contextReceiverField0

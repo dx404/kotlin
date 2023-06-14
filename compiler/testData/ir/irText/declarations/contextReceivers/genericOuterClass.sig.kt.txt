@@ -8,7 +8,7 @@ class A<T : Any?> {
   constructor($context_receiver_0: T) /* primary */
   // CHECK JVM_IR:
   //   Mangled name computed from Ir:         A.contextReceiverField0
-  //   Mangled name computed from Descriptor: A{}contextReceiverField0#jf
+  //   Mangled name computed from Descriptor: A{}contextReceiverField0
   // CHECK JS_IR NATIVE:
   //   Mangled name computed from Ir:         A.contextReceiverField0
   //   Mangled name computed from Descriptor: A{}contextReceiverField0
@@ -26,7 +26,7 @@ class B<P : Any?> {
   constructor($context_receiver_0: Collection<P>) /* primary */
   // CHECK JVM_IR:
   //   Mangled name computed from Ir:         B.contextReceiverField0
-  //   Mangled name computed from Descriptor: B{}contextReceiverField0#jf
+  //   Mangled name computed from Descriptor: B{}contextReceiverField0
   // CHECK JS_IR NATIVE:
   //   Mangled name computed from Ir:         B.contextReceiverField0
   //   Mangled name computed from Descriptor: B{}contextReceiverField0

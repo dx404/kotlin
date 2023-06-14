@@ -80,7 +80,7 @@ class Result {
   constructor($context_receiver_0: Int) /* primary */
   // CHECK JVM_IR:
   //   Mangled name computed from Ir:         Result.contextReceiverField0
-  //   Mangled name computed from Descriptor: Result{}contextReceiverField0#jf
+  //   Mangled name computed from Descriptor: Result{}contextReceiverField0
   // CHECK JS_IR NATIVE:
   //   Mangled name computed from Ir:         Result.contextReceiverField0
   //   Mangled name computed from Descriptor: Result{}contextReceiverField0
