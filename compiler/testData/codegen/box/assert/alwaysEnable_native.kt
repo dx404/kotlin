@@ -1,10 +1,7 @@
-// IGNORE_BACKEND: WASM
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND: JS
-// IGNORE_BACKEND: NATIVE
-// ASSERTIONS_MODE: always-enable
+// TARGET_BACKEND: NATIVE
 // WITH_STDLIB
+
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
 fun checkTrue(): Boolean {
     var hit = false
