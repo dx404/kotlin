@@ -34,7 +34,7 @@ See also [root ReadMe.md, section "Building"](../ReadMe.md#building).
 
 Then you can build maven artifacts with Maven:
 
-    mvn install
+    ./mvnw install
 
 If your maven build is failing with Out-Of-Memory errors, set JVM options for maven in `MAVEN_OPTS` environment variable like this:
 
