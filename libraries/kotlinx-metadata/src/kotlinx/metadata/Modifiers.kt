@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Visibility as ProtoVisibility
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality as ProtoModality
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind as ProtoMemberKind
 
-// Do not reorder any enums in this file!
+// Pay attention to the order of enums in this file!
+// Order of enum values is directly linked to order of corresponding protobuf enums in org.jetbrains.kotlin.metadata.ProtoBuf.
+// Changes in the binary format should be reflected in the protobuf and therefore in enums in this file.
+// Arbitrary reordering of enum members here will likely break deserialization.
 
 /**
  * Represents visibility level (also known as access level) of a corresponding declaration.
@@ -73,6 +76,8 @@ enum class Visibility(kind: Int) {
 
 /**
  * Represents modality of a corresponding declaration.
+ *
+ * Modality determines when and where it is possible to extend/override a class/member.
  */
 enum class Modality(kind: Int) {
     /**
@@ -93,8 +98,8 @@ enum class Modality(kind: Int) {
     /**
      * Signifies that the corresponding declaration is `sealed`.
      *
-     * Pay attention that this modality is not applicable to class' members.
-     * Setting it as a value for member modality leads to an undefined behaviour.
+     * Pay attention that this modality is not applicable to class members.
+     * Setting it as a value for member modality leads to an undefined behavior.
      */
     SEALED(ProtoModality.SEALED_VALUE)
     ;

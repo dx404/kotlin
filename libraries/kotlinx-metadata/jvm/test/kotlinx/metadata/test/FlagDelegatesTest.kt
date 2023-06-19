@@ -160,4 +160,33 @@ class FlagDelegatesTest {
         }
 
     }
+
+    class X {
+
+        val x2 = 2
+        fun x22() = 2
+        val x3 = x22()
+
+        companion object Y {
+            val y2 = 2
+            const val y3 = 3
+        }
+    }
+
+    @Test
+    fun testHasConstantExample() {
+        class X {
+            val a = 1
+            val b = a
+
+            fun x() = 2
+            val c = x()
+        }
+
+        val props = X::class.java.readMetadataAsKmClass().properties.associateBy { it.name }
+        props.values.forEach { assertFalse(it.isConst, it.name) }
+        assertTrue(props.getValue("a").hasConstant)
+        assertTrue(props.getValue("b").hasConstant)
+        assertFalse(props.getValue("c").hasConstant)
+    }
 }
