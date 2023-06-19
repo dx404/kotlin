@@ -218,7 +218,7 @@ internal fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
     }
 
     val objType = jsTypeOf(obj)
-    val jsClassType = jsTypeOf(obj)
+    val jsClassType = jsTypeOf(jsClass)
 
     if (obj == null || jsClass == null || (objType != "object" && objType != "function")) {
         return false
