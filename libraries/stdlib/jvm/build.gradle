@@ -93,7 +93,7 @@ dependencies {
     builtins project(':core:builtins')
 }
 
-jar {
+tasks.named("jar", Jar) {
     dependsOn(configurations.builtins)
     manifestAttributes(manifest, project, 'Main', true)
     from {
@@ -114,7 +114,7 @@ sourcesJar {
     }
 }
 
-task distSourcesJar(type: Jar) {
+tasks.register('distSourcesJar', Jar) {
     dependsOn(sourcesJar, configurations.commonSources)
     destinationDirectory = file("$buildDir/lib/dist")
     archiveClassifier.set('sources')
@@ -136,7 +136,7 @@ artifacts {
 }
 
 DexMethodCountKt.dexMethodCount(project) { task ->
-    task.from(jar)
+    task.from(tasks.named("jar", Jar))
     task.ownPackages = ['kotlin']
 }
 
