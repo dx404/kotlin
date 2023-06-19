@@ -30,7 +30,7 @@ internal fun equals(obj1: dynamic, obj2: dynamic): Boolean {
 internal fun toString(o: dynamic): String = when {
     o == null -> "null"
     isArrayish(o) -> "[...]"
-
+    jsTypeOf(o.toString) != "function" -> anyToString(o)
     else -> (o.toString)().unsafeCast<String>()
 }
 
@@ -61,14 +61,13 @@ private fun getBigIntHashCode(value: dynamic): Int {
     val shiftNumber = js("BigInt(32)");
     @Suppress("UNUSED_VARIABLE")
     val LONG_MASK = js("BigInt(0xffffffff)");
-    val magnitudeSize = JsMath.ceil(value.toString(2).length / 32).unsafeCast<Int>()
 
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     var bigNumber = if (value < 0) -value else value
     var hashCode = 0
     val signum = if (value < 0) -1 else 1
 
-    for (i in 0 until magnitudeSize) {
+    while (bigNumber != 0) {
         val chunk = js("Number(bigNumber & LONG_MASK)").unsafeCast<Int>()
         hashCode = (31 * hashCode + chunk) or 0
         @Suppress("UNUSED_VALUE")

@@ -170,6 +170,9 @@ internal fun isArray(obj: Any): Boolean {
     return isJsArray(obj) && !(obj.asDynamic().`$type$`)
 }
 
+// TODO: Remove after the next bootstrap
+internal fun isObject(o: dynamic): Boolean = o != null
+
 internal fun isArrayish(o: dynamic) = isJsArray(o) || arrayBufferIsView(o)
 
 internal fun isChar(@Suppress("UNUSED_PARAMETER") c: Any): Boolean {
