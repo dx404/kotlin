@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.DUMMY_FRAMEWORK_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_IMPORT_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SPEC_TASK_NAME
+import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -691,7 +692,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 """.trimIndent()
             )
             buildWithCocoapodsWrapper(":linkPodDebugFrameworkIOS") {
-                assertOutputContains("Dependency on 'AFNetworking' with option 'linkOnly=true' is unused for building static frameworks")
+                assertHasDiagnostic(CocoapodsPluginDiagnostics.LinkOnlyUsedWithStaticFramework)
             }
         }
     }
@@ -726,9 +727,9 @@ class CocoaPodsIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Configuration fails when dependant pods are in the wrong order")
+    @DisplayName("Error reported when dependant pods are in the wrong order")
     @GradleTest
-    fun testConfigurationFailsWhenDependantPodsAreInTheWrongOrder(gradleVersion: GradleVersion) {
+    fun testErrorReportedWhenDependantPodsAreInTheWrongOrder(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsDependantPodsProjectName, gradleVersion) {
             buildGradleKts.addCocoapodsBlock(
                 """
@@ -743,15 +744,15 @@ class CocoaPodsIT : KGPBaseTest() {
                 )
             )
 
-            buildAndFail(":help", buildOptions = buildOptions) {
-                assertOutputContains("Couldn't find declaration of pod 'Bar' (interop-binding dependency of pod 'Foo')")
+            build(":help", buildOptions = buildOptions) {
+                assertHasDiagnostic(CocoapodsPluginDiagnostics.InteropBindingUnknownDependency)
             }
         }
     }
 
-    @DisplayName("Configuration fails when pod depends on itself")
+    @DisplayName("Error reported when pod depends on itself")
     @GradleTest
-    fun testConfigurationFailsWhenPodDependsOnItself(gradleVersion: GradleVersion) {
+    fun testErrorReportedWhenPodDependsOnItself(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsDependantPodsProjectName, gradleVersion) {
             buildGradleKts.addCocoapodsBlock(
                 """
@@ -765,8 +766,8 @@ class CocoaPodsIT : KGPBaseTest() {
                 )
             )
 
-            buildAndFail(":help", buildOptions = buildOptions) {
-                assertOutputContains("Pod 'Foo' has an interop-binding dependency on itself")
+            build(":help", buildOptions = buildOptions) {
+                assertHasDiagnostic(CocoapodsPluginDiagnostics.InteropBindingSelfDependency)
             }
         }
     }
