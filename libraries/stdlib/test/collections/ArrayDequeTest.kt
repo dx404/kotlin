@@ -5,11 +5,7 @@
 
 package test.collections
 
-import test.TestPlatform
-import test.collections.behaviors.iteratorBehavior
-import test.collections.behaviors.listIteratorBehavior
-import test.collections.behaviors.listIteratorProperties
-import test.current
+import test.*
 import kotlin.random.Random
 import kotlin.random.nextInt
 import kotlin.test.*
