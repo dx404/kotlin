@@ -405,15 +405,6 @@ internal class InternalHashMap<K, V> private constructor(
         }
     }
 
-    internal fun getKey(key: K): K? {
-        val index = findKey(key)
-        return if (index >= 0) {
-            keysArray[index]!!
-        } else {
-            null
-        }
-    }
-
     private fun contentEquals(other: Map<*, *>): Boolean = _size == other.size && containsAllEntries(other.entries)
 
     private fun putEntry(entry: Map.Entry<K, V>): Boolean {

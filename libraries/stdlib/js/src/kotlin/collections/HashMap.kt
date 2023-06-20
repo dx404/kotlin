@@ -77,7 +77,6 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
 
     actual override fun clear() {
         internalMap.clear()
-//        structureChanged(this)
     }
 
     actual override fun containsKey(key: K): Boolean = internalMap.contains(key)
