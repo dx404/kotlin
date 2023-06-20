@@ -1,4 +1,4 @@
-info: produce executable: [test directory]
+info: produce executable: $TEMP_DIR$
 info: cache directory: null
 info: executable production duration: [time]
 OK

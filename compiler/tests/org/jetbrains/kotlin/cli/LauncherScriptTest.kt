@@ -56,12 +56,12 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         val stdout =
             AbstractCliTest.getNormalizedCompilerOutput(
                 StringUtil.convertLineSeparators(process.inputStream.bufferedReader().use { it.readText() }),
-                null, testDataDirectory
+                null, testDataDirectory, tmpdir.absolutePath
             )
         val stderr =
             AbstractCliTest.getNormalizedCompilerOutput(
                 StringUtil.convertLineSeparators(process.errorStream.bufferedReader().use { it.readText() }),
-                null, testDataDirectory
+                null, testDataDirectory, tmpdir.absolutePath
             ).replace("Picked up [_A-Z]+:.*\n".toRegex(), "")
                 .replace("The system cannot find the file specified", "No such file or directory") // win -> unix
         process.waitFor(10, TimeUnit.SECONDS)

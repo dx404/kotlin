@@ -1,5 +1,5 @@
-error: could not find "compiler/testData/integration/ant/js/simpleWithJsFileAsAnotherLib" in [/Users/ilya.goncharov/repos/kotlin]
-exception: java.lang.IllegalStateException: FATAL ERROR: Could not find "compiler/testData/integration/ant/js/simpleWithJsFileAsAnotherLib" in [/Users/ilya.goncharov/repos/kotlin]
+error: could not find "compiler/testData/integration/ant/js/simpleWithJsFileAsAnotherLib" in [$USER_DIR$]
+exception: java.lang.IllegalStateException: FATAL ERROR: Could not find "compiler/testData/integration/ant/js/simpleWithJsFileAsAnotherLib" in [$USER_DIR$]
 	at org.jetbrains.kotlin.ir.backend.js.KlibKt$resolverLogger$1.fatal(klib.kt:114)
 	at org.jetbrains.kotlin.library.KotlinLibrarySearchPathResolver.resolve(SearchPathResolver.kt:170)
 	at org.jetbrains.kotlin.library.SearchPathResolver.resolve$default(SearchPathResolver.kt:19)
@@ -29,8 +29,8 @@ exception: java.lang.IllegalStateException: FATAL ERROR: Could not find "compile
 	at org.jetbrains.kotlin.cli.common.CLITool$Companion.doMainNoExit$default(CLITool.kt:175)
 	at org.jetbrains.kotlin.test.CompilerTestUtil.executeCompiler(CompilerTestUtil.kt:41)
 	at org.jetbrains.kotlin.cli.AbstractCliTest.executeCompilerGrabOutput(AbstractCliTest.java:74)
-	at org.jetbrains.kotlin.cli.AbstractCliTest.doTest(AbstractCliTest.java:116)
-	at org.jetbrains.kotlin.cli.AbstractCliTest.doJsTest(AbstractCliTest.java:299)
+	at org.jetbrains.kotlin.cli.AbstractCliTest.doTest(AbstractCliTest.java:124)
+	at org.jetbrains.kotlin.cli.AbstractCliTest.doJsTest(AbstractCliTest.java:310)
 	at org.jetbrains.kotlin.test.KotlinTestUtils.lambda$testWithCustomIgnoreDirective$4(KotlinTestUtils.java:527)
 	at org.jetbrains.kotlin.test.KotlinTestUtils.runTestImpl(KotlinTestUtils.java:497)
 	at org.jetbrains.kotlin.test.KotlinTestUtils.runTest(KotlinTestUtils.java:440)
