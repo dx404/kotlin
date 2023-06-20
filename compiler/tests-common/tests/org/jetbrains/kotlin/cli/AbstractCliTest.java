@@ -97,7 +97,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getAbsolutePath(), "$PROJECT_DIR$")
                 .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getParentFile().getAbsolutePath(), "$DIST_DIR$")
                 .replace(org.jetbrains.kotlin.konan.file.File.Companion.getUserDir().getAbsolutePath(), "$USER_DIR$")
-                .replace(tmpdir, "$TEMP_DIR$")
+                .replace(tmpdir, "$TMP_DIR$")
                 .replaceAll("info: executable production duration: \\d+ms", "info: executable production duration: [time]")
                 .replace("expected version is " + JvmMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("expected version is " + JsMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
