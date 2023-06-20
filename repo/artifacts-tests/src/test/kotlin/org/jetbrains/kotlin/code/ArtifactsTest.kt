@@ -16,8 +16,6 @@ import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.test.Test
 
-private typealias PomFilter = (Path, BasicFileAttributes) -> Boolean
-
 class ArtifactsTest {
 
     private val mavenReader = MavenXpp3Reader()
@@ -28,17 +26,19 @@ class ArtifactsTest {
     private val expectedRepoPath = Paths.get("repo", "artifacts-tests", "src", "test", "resources", "org", "jetbrains", "kotlin")
     private val versionRegex = "-\\d+\\.\\d+\\.\\d+(-SNAPSHOT)?".toRegex()
 
-    private val pomFilterWithVersion: PomFilter = { path: Path, fileAttributes: BasicFileAttributes ->
-        fileAttributes.isRegularFile
-                && "${path.fileName}".endsWith(".pom", ignoreCase = true)
-                && path.contains(Paths.get(kotlinVersion))
+    private fun artifactExtFilter(ext: String): (Path, BasicFileAttributes) -> Boolean {
+        return { path: Path, fileAttributes: BasicFileAttributes ->
+            fileAttributes.isRegularFile
+                    && "${path.fileName}".endsWith(ext, ignoreCase = true)
+                    && path.contains(Paths.get(kotlinVersion))
+        }
     }
 
     @Test
     fun verifyArtifactFiles() {
-        val actualPoms = Files.find(localRepoPath, Integer.MAX_VALUE, pomFilterWithVersion)
+        val actualPoms = Files.find(localRepoPath, Integer.MAX_VALUE, artifactExtFilter(".pom"))
         actualPoms.forEach { actual ->
-            val expectedPomPath = actual.toExpectedPomPath()
+            val expectedPomPath = actual.toExpectedPath()
             val actualString = actual.toFile().readText()
             assertEqualsToFile(expectedPomPath, actualString, ::pomSanitizer)
         }
@@ -50,7 +50,7 @@ class ArtifactsTest {
      * to:
      * ${expectedRepository}/org/jetbrains/kotlin/artifact/artifact.pom
      */
-    private fun Path.toExpectedPomPath(): Path {
+    private fun Path.toExpectedPath(): Path {
         val expectedFileName = this.fileName.toString().replace(versionRegex, "")
         val artifactDirPath = localRepoPath.relativize(this).parent.parent
         return expectedRepoPath.resolve(artifactDirPath.resolve(expectedFileName))
@@ -64,6 +64,13 @@ class ArtifactsTest {
         val model = mavenReader.read(StringReader(pom))
         if (model.version != null) model.version = kotlinVersion
         model.dependencies.forEach {
+            if (it.groupId == "org.jetbrains.kotlin") {
+                if (it.artifactId != "kotlin-reflect" && it.version != "1.6.10") {
+                    it.version = kotlinVersion
+                }
+            }
+        }
+        model.dependencyManagement?.dependencies?.forEach {
             if (it.groupId == "org.jetbrains.kotlin") {
                 if (it.artifactId != "kotlin-reflect" && it.version != "1.6.10") {
                     it.version = kotlinVersion
