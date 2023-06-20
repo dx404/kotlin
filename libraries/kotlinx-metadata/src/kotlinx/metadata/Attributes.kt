@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags as ProtoFlags
 // --- ANNOTATIONS ---
 
 /**
- * Indicates if the corresponding class has at least one annotation.
+ * Indicates that the corresponding class has at least one annotation.
  *
  * This flag is useful for reading Kotlin metadata on JVM efficiently. On JVM, most of the annotations are written not to the Kotlin
  * metadata, but directly to the corresponding declarations in the class file. This flag can be used as an optimization to avoid
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags as ProtoFlags
 var KmClass.hasAnnotations by annotationsOn(KmClass::flags)
 
 /**
- * Indicates if the corresponding constructor has at least one annotation.
+ * Indicates that the corresponding constructor has at least one annotation.
  *
  * This flag is useful for reading Kotlin metadata on JVM efficiently. On JVM, most of the annotations are written not to the Kotlin
  * metadata, but directly to the corresponding declarations in the class file. This flag can be used as an optimization to avoid
@@ -41,7 +41,7 @@ var KmClass.hasAnnotations by annotationsOn(KmClass::flags)
 var KmConstructor.hasAnnotations by annotationsOn(KmConstructor::flags)
 
 /**
- * Indicates if the corresponding function has at least one annotation.
+ * Indicates that the corresponding function has at least one annotation.
  *
  * This flag is useful for reading Kotlin metadata on JVM efficiently. On JVM, most of the annotations are written not to the Kotlin
  * metadata, but directly to the corresponding declarations in the class file. This flag can be used as an optimization to avoid
@@ -52,7 +52,7 @@ var KmConstructor.hasAnnotations by annotationsOn(KmConstructor::flags)
 var KmFunction.hasAnnotations by annotationsOn(KmFunction::flags)
 
 /**
- * Indicates if the corresponding property has at least one annotation.
+ * Indicates that the corresponding property has at least one annotation.
  *
  * This flag is useful for reading Kotlin metadata on JVM efficiently. On JVM, most of the annotations are written not to the Kotlin
  * metadata, but directly to the corresponding declarations in the class file. This flag can be used as an optimization to avoid
@@ -63,7 +63,7 @@ var KmFunction.hasAnnotations by annotationsOn(KmFunction::flags)
 var KmProperty.hasAnnotations by annotationsOn(KmProperty::flags)
 
 /**
- * Indicates if the corresponding property accessor has at least one annotation.
+ * Indicates that the corresponding property accessor has at least one annotation.
  *
  * This flag is useful for reading Kotlin metadata on JVM efficiently. On JVM, most of the annotations are written not to the Kotlin
  * metadata, but directly to the corresponding declarations in the class file. This flag can be used as an optimization to avoid
@@ -74,7 +74,7 @@ var KmProperty.hasAnnotations by annotationsOn(KmProperty::flags)
 var KmPropertyAccessorAttributes.hasAnnotations by annotationsOn(KmPropertyAccessorAttributes::flags)
 
 /**
- * Indicates if the corresponding value parameter has at least one annotation.
+ * Indicates that the corresponding value parameter has at least one annotation.
  *
  * This flag is useful for reading Kotlin metadata on JVM efficiently. On JVM, most of the annotations are written not to the Kotlin
  * metadata, but directly to the corresponding declarations in the class file. This flag can be used as an optimization to avoid
@@ -85,7 +85,7 @@ var KmPropertyAccessorAttributes.hasAnnotations by annotationsOn(KmPropertyAcces
 var KmValueParameter.hasAnnotations by annotationsOn(KmValueParameter::flags)
 
 /**
- * Indicates if the corresponding type alias has at least one annotation.
+ * Indicates that the corresponding type alias has at least one annotation.
  *
  * Type aliases store their annotation in metadata directly (accessible via [KmTypeAlias.annotations]) and
  * in the class file at the same time.
@@ -183,6 +183,9 @@ var KmConstructor.isSecondary: Boolean by constructorBooleanFlag(Flag(ProtoFlags
 
 /**
  * Indicates that the corresponding constructor has non-stable parameter names, i.e., cannot be called with named arguments.
+ *
+ * Currently, this attribute is Native-specific and is never set by Kotlin/JVM compiler.
+ * This may be changed in the future.
  */
 var KmConstructor.hasNonStableParameterNames: Boolean by constructorBooleanFlag(Flag(ProtoFlags.IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES))
 
@@ -247,6 +250,9 @@ var KmFunction.isExpect: Boolean by functionBooleanFlag(Flag(ProtoFlags.IS_EXPEC
 
 /**
  * Indicates that the corresponding function has non-stable parameter names, i.e., cannot be called with named arguments.
+ *
+ * Currently, this attribute is Native-specific and is never set by Kotlin/JVM compiler.
+ * This may be changed in the future.
  */
 var KmFunction.hasNonStableParameterNames: Boolean by functionBooleanFlag(Flag(ProtoFlags.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES))
 
