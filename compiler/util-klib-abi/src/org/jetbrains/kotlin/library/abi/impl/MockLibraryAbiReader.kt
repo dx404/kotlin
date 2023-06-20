@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalLibraryAbiReader::class)
-
 package org.jetbrains.kotlin.library.abi.impl
 
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -22,7 +20,7 @@ internal object MockLibraryAbiReader {
             manifest = LibraryManifest(
                 uniqueName = library.nameWithoutExtension,
                 platform = "NATIVE",
-                nativeTargets = sortedSetOf("ios_arm64"),
+                nativeTargets = listOf("ios_arm64"),
                 compilerVersion = "1.9.20",
                 abiVersion = "1.8.0",
                 libraryVersion = "0.0.1",
@@ -375,7 +373,7 @@ internal object MockLibraryAbiReader {
             "klib.abi.test/overloadedTopLevelFun|-2971508381780377198[0]",
             "klib.abi.test/overloadedTopLevelFun<kotlin/Appendable&kotlin/CharSequence>(#0)=kotlin/String"
         ),
-        finalFun(
+        finalSuspendFun(
             "klib.abi.test/suspendTopLevelFun|-2671426082158503799[0]",
             "klib.abi.test/suspendTopLevelFun(kotlin/Int)=kotlin/String|s"
         ),
@@ -398,17 +396,18 @@ internal object MockLibraryAbiReader {
         finalFun(
             "klib.abi.test/topLevelFunWithDefaults|1159926268696030611[0]",
             "klib.abi.test/topLevelFunWithDefaults(kotlin/Int;kotlin/Long)=kotlin/String",
-            valueParameterFlags(
-                0 to AbiFunction.ValueParameterFlag.HAS_DEFAULT_ARG,
-                1 to AbiFunction.ValueParameterFlag.HAS_DEFAULT_ARG
+            valueParameters(
+                /* #0 */ valueParameter(hasDefaultArg = true),
+                /* #1 */ valueParameter(hasDefaultArg = true)
             )
         ),
         inlineFun(
             "klib.abi.test/topLevelInlineFun|-5396238017896868274[0]",
             "klib.abi.test/topLevelInlineFun(kotlin/Function1<kotlin/Int;kotlin/String>;kotlin/Function1<kotlin/Int;kotlin/String>;kotlin/Function1<kotlin/Int;kotlin/String>)",
-            valueParameterFlags(
-                1 to AbiFunction.ValueParameterFlag.NOINLINE,
-                2 to AbiFunction.ValueParameterFlag.CROSSINLINE
+            valueParameters(
+                /* #0 */ valueParameter(),
+                /* #1 */ valueParameter(isNoinline = true),
+                /* #2 */ valueParameter(isCrossinline = true)
             )
         ),
         finalFun(
@@ -446,22 +445,21 @@ internal object MockLibraryAbiReader {
     )
 }
 
-private fun topLevels(vararg declarations: AbiDeclaration) = AbiTopLevelDeclarationsImpl(
-    declarations = declarations.toList()
-)
+private fun topLevels(vararg declarations: AbiPossiblyTopLevelDeclaration) = AbiTopLevelDeclarationsImpl(declarations.toList())
 
 private fun constructor(sv1: String, sv2: String) = AbiFunctionImpl(
     signatures = AbiSignaturesImpl(sv1, sv2),
     modality = Modality.FINAL,
     isConstructor = true,
     isInline = false,
-    valueParameterFlags = null
+    isSuspend = false,
+    valueParameters = emptyList()
 )
 
 private fun finalVal(sv1: String, sv2: String, getter: AbiFunction) = AbiPropertyImpl(
     signatures = AbiSignaturesImpl(sv1, sv2),
     modality = Modality.FINAL,
-    mutability = AbiProperty.Mutability.VAL,
+    kind = AbiPropertyKind.VAL,
     getter = getter,
     setter = null
 )
@@ -469,7 +467,7 @@ private fun finalVal(sv1: String, sv2: String, getter: AbiFunction) = AbiPropert
 private fun finalConstVal(sv1: String, sv2: String, getter: AbiFunction) = AbiPropertyImpl(
     signatures = AbiSignaturesImpl(sv1, sv2),
     modality = Modality.FINAL,
-    mutability = AbiProperty.Mutability.CONST_VAL,
+    kind = AbiPropertyKind.CONST_VAL,
     getter = getter,
     setter = null
 )
@@ -477,37 +475,42 @@ private fun finalConstVal(sv1: String, sv2: String, getter: AbiFunction) = AbiPr
 private fun finalVar(sv1: String, sv2: String, getter: AbiFunction, setter: AbiFunction) = AbiPropertyImpl(
     signatures = AbiSignaturesImpl(sv1, sv2),
     modality = Modality.FINAL,
-    mutability = AbiProperty.Mutability.VAR,
+    kind = AbiPropertyKind.VAR,
     getter = getter,
     setter = setter
 )
 
-private fun valueParameterFlags(vararg flags: Pair<Int, AbiFunction.ValueParameterFlag>): AbiFunction.ValueParameterFlags =
-    if (flags.isEmpty()) {
-        AbiFunction.ValueParameterFlags(emptyList())
-    } else {
-        val maxIndex = flags.maxOf { it.first }
-        val map = flags.associate { it.first to sortedSetOf(it.second) }
-        val list = List<SortedSet<AbiFunction.ValueParameterFlag>>(maxIndex + 1) { index ->
-            map[index] ?: sortedSetOf()
-        }
-        AbiFunction.ValueParameterFlags(list)
-    }
+private fun valueParameter(hasDefaultArg: Boolean = false, isNoinline: Boolean = false, isCrossinline: Boolean = false) =
+    AbiValueParameterImpl(hasDefaultArg, isNoinline, isCrossinline)
 
-private fun finalFun(sv1: String, sv2: String, valueParameterFlags: AbiFunction.ValueParameterFlags? = null) = AbiFunctionImpl(
+private fun valueParameters(vararg valueParameters: AbiValueParameter): List<AbiValueParameter> =
+    valueParameters.toList()
+
+private fun finalFun(sv1: String, sv2: String, valueParameters: List<AbiValueParameter> = emptyList()) = AbiFunctionImpl(
     signatures = AbiSignaturesImpl(sv1, sv2),
     modality = Modality.FINAL,
     isConstructor = false,
     isInline = false,
-    valueParameterFlags = valueParameterFlags
+    isSuspend = false,
+    valueParameters = valueParameters
 )
 
-private fun inlineFun(sv1: String, sv2: String, valueParameterFlags: AbiFunction.ValueParameterFlags? = null) = AbiFunctionImpl(
+private fun finalSuspendFun(sv1: String, sv2: String, valueParameters: List<AbiValueParameter> = emptyList()) = AbiFunctionImpl(
+    signatures = AbiSignaturesImpl(sv1, sv2),
+    modality = Modality.FINAL,
+    isConstructor = false,
+    isInline = false,
+    isSuspend = true,
+    valueParameters = valueParameters
+)
+
+private fun inlineFun(sv1: String, sv2: String, valueParameters: List<AbiValueParameter> = emptyList()) = AbiFunctionImpl(
     signatures = AbiSignaturesImpl(sv1, sv2),
     modality = Modality.FINAL,
     isConstructor = false,
     isInline = true,
-    valueParameterFlags = valueParameterFlags
+    isSuspend = false,
+    valueParameters = valueParameters
 )
 
 private fun abstractFun(sv1: String, sv2: String) = AbiFunctionImpl(
@@ -515,7 +518,8 @@ private fun abstractFun(sv1: String, sv2: String) = AbiFunctionImpl(
     modality = Modality.ABSTRACT,
     isConstructor = false,
     isInline = false,
-    valueParameterFlags = null
+    isSuspend = false,
+    valueParameters = emptyList()
 )
 
 private fun abstractClass(sv1: String, sv2: String, superTypes: SortedSet<AbiSuperType>, vararg declarations: AbiDeclaration) =

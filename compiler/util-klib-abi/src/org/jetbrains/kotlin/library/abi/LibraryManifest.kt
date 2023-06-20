@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.library.abi
 
 import org.jetbrains.kotlin.library.*
-import java.util.*
 
 /**
  * Anything that can be retrieved from manifest and that might be helpful to know about the inspected KLIB.
@@ -23,7 +22,7 @@ import java.util.*
 data class LibraryManifest(
     val uniqueName: String?,
     val platform: String?,
-    val nativeTargets: SortedSet<String>,
+    val nativeTargets: List<String>,
     val compilerVersion: String?,
     val abiVersion: String?,
     val libraryVersion: String?,

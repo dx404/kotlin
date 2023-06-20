@@ -39,6 +39,16 @@ interface AbiSignatures {
     operator fun get(signatureVersion: AbiSignatureVersion): String?
 }
 
+@ExperimentalLibraryAbiReader
+interface AbiDeclaration {
+    val signatures: AbiSignatures
+}
+
+@ExperimentalLibraryAbiReader
+interface AbiPossiblyTopLevelDeclaration : AbiDeclaration {
+    val modality: Modality
+}
+
 /**
  * Important: The order of [declarations] is preserved exactly as in serialized IR.
  * Would you need to use a different order while rendering, please refer to [AbiRenderingSettings.renderingOrder].
@@ -52,21 +62,13 @@ interface AbiDeclarationContainer {
 interface AbiTopLevelDeclarations : AbiDeclarationContainer
 
 @ExperimentalLibraryAbiReader
-interface AbiDeclaration {
-    val signatures: AbiSignatures
-    val modality: Modality
-}
-
-@ExperimentalLibraryAbiReader
-interface AbiClass : AbiDeclaration, AbiDeclarationContainer {
+interface AbiClass : AbiPossiblyTopLevelDeclaration, AbiDeclarationContainer {
     val kind: ClassKind
     val isInner: Boolean
     val isValue: Boolean
     val isFunction: Boolean
 
-    /**
-     * The set of non-trivial supertypes (i.e. excluding [kotlin.Any] for regular classes, [kotlin.Enum] for enums, etc).
-     */
+    /** The set of non-trivial supertypes (i.e. excluding [kotlin.Any] for regular classes, [kotlin.Enum] for enums, etc). */
     val superTypes: Set<AbiSuperType>
 }
 
@@ -74,22 +76,30 @@ interface AbiClass : AbiDeclaration, AbiDeclarationContainer {
 typealias AbiSuperType = String
 
 @ExperimentalLibraryAbiReader
-interface AbiFunction : AbiDeclaration {
+interface AbiEnumEntry : AbiDeclaration
+
+@ExperimentalLibraryAbiReader
+interface AbiFunction : AbiPossiblyTopLevelDeclaration {
     val isConstructor: Boolean
     val isInline: Boolean
+    val isSuspend: Boolean
 
     /** Additional value parameter flags that might affect binary compatibility and that should be rendered along with the function itself. */
-    val valueParameterFlags: ValueParameterFlags?
+    val valueParameters: List<AbiValueParameter>
+}
 
-    enum class ValueParameterFlag { HAS_DEFAULT_ARG, NOINLINE, CROSSINLINE }
-    data class ValueParameterFlags(val flags: List<Set<ValueParameterFlag>>)
+interface AbiValueParameter {
+    val hasDefaultArg: Boolean
+    val isNoinline: Boolean
+    val isCrossinline: Boolean
 }
 
 @ExperimentalLibraryAbiReader
-interface AbiProperty : AbiDeclaration {
-    val mutability: Mutability
+interface AbiProperty : AbiPossiblyTopLevelDeclaration {
+    val kind: AbiPropertyKind
     val getter: AbiFunction?
     val setter: AbiFunction?
-
-    enum class Mutability { VAL, CONST_VAL, VAR }
 }
+
+@ExperimentalLibraryAbiReader
+enum class AbiPropertyKind { VAL, CONST_VAL, VAR }

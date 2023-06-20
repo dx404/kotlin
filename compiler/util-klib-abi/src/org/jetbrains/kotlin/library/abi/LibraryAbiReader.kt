@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.library.abi
 
-import org.jetbrains.kotlin.library.abi.impl.MockLibraryAbiReader
+import org.jetbrains.kotlin.library.abi.impl.LibraryAbiReaderImpl
 import java.io.File
 
 @ExperimentalLibraryAbiReader
@@ -13,5 +13,5 @@ object LibraryAbiReader {
     /**
      * Inspect the KLIB at [library]. The KLIB can be either in a directory (unzipped) or in a file (zipped) form.
      */
-    fun readAbiInfo(library: File): LibraryAbi = MockLibraryAbiReader.readAbiInfo(library) // TODO: replace by a real implementation
+    fun readAbiInfo(library: File): LibraryAbi = LibraryAbiReaderImpl(library).readAbi()
 }
