@@ -260,6 +260,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should still do JVM target validation if no java sources are available")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     internal fun shouldDoJvmTargetValidationOnNoJavaSources(gradleVersion: GradleVersion) {
         project(

@@ -166,9 +166,8 @@ open class Kapt3IT : Kapt3BaseIT() {
             buildGradle.appendText(
                 """
                 |
-                |java {
-                |    sourceCompatibility = JavaVersion.VERSION_1_8
-                |    targetCompatibility = JavaVersion.VERSION_1_8
+                |kotlin {
+                |    jvmToolchain(8)
                 |}
                 """.trimMargin()
             )
@@ -894,6 +893,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @DisplayName("KT-31127: processor using Filer api does not break 'javaCompile' task")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     fun testKotlinProcessorUsingFiler(gradleVersion: GradleVersion) {
         project("kotlinProject", gradleVersion) {
@@ -930,10 +930,11 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("should do annotation processing when 'sourceCompatibility = 8' and JDK is 11+")
     @JdkVersions(versions = [JavaVersion.VERSION_11])
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleWithJdkTest
     fun testSimpleWithJdk11AndSourceLevel8(
         gradleVersion: GradleVersion,
-        jdk: JdkVersions.ProvidedJdk
+        jdk: JdkVersions.ProvidedJdk,
     ) {
         project(
             "simple".withPrefix,

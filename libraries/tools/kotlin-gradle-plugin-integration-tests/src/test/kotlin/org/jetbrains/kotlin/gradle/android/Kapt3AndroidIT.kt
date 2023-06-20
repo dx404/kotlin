@@ -36,6 +36,7 @@ class Kapt3AndroidIT : Kapt3BaseIT() {
     }
 
     @DisplayName("KT-25374: kapt doesn't fail with anonymous classes with IC")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleAndroidTest
     fun testICWithAnonymousClasses(
         gradleVersion: GradleVersion,
