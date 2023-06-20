@@ -6,7 +6,7 @@
 
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-project</artifactId>
-    <version>1.9.255-SNAPSHOT</version>
+    <version>ArtifactsTest.version</version>
     <packaging>pom</packaging>
 
     <name>Kotlin</name>
@@ -36,6 +36,10 @@
             <organizationUrl>https://www.jetbrains.com</organizationUrl>
         </developer>
     </developers>
+
+    <organization>
+        <name>JetBrains s.r.o.</name>
+    </organization>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -253,6 +257,26 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.spdx</groupId>
+                <artifactId>spdx-maven-plugin</artifactId>
+                <version>0.6.5</version>
+                <executions>
+                    <execution>
+                        <id>build-spdx</id>
+                        <goals>
+                            <goal>createSPDX</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <spdxDocumentNamespace>https://www.jetbrains.com/spdxdocs/${project.artifactId}-${project.version}</spdxDocumentNamespace>
+                    <creators>
+                        <creator>Organization: JetBrains s.r.o.</creator>
+                    </creators>
+                    <originator>Organization: JetBrains s.r.o.</originator>
+                </configuration>
             </plugin>
         </plugins>
     </build>

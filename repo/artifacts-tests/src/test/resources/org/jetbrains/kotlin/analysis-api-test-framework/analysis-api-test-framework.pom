@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>analysis-api-test-framework</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Analysis Api Test Framework</name>
   <description>Analysis Api Test Framework</description>
   <url>https://kotlinlang.org/</url>

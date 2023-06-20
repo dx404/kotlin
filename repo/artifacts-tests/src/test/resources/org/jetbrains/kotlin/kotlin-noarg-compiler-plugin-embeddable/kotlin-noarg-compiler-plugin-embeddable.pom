@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-noarg-compiler-plugin-embeddable</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlin Noarg Compiler Plugin.embeddable</name>
   <description>Kotlin Noarg Compiler Plugin.embeddable</description>
   <url>https://kotlinlang.org/</url>

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-compiler-client-embeddable</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlin Compiler Client Embeddable</name>
   <description>Kotlin compiler client embeddable</description>
   <url>https://kotlinlang.org/</url>

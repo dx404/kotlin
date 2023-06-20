@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-annotation-processing</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlin Annotation Processing</name>
   <description>Annotation Processor for Kotlin</description>
   <url>https://kotlinlang.org/</url>

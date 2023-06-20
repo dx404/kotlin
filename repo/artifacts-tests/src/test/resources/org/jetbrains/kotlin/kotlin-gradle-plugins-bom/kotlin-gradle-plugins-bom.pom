@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-gradle-plugins-bom</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <packaging>pom</packaging>
   <name>Kotlin Gradle Plugins Bom</name>
   <description>Kotlin Gradle Plugins Bom</description>
@@ -37,67 +37,67 @@
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-gradle-plugin-api</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>ArtifactsTest.version</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-gradle-plugin-annotations</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>ArtifactsTest.version</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-gradle-plugin-model</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>ArtifactsTest.version</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-native-utils</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>ArtifactsTest.version</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-tooling-core</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>ArtifactsTest.version</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-gradle-plugin</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>ArtifactsTest.version</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>atomicfu</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>ArtifactsTest.version</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-allopen</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>ArtifactsTest.version</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-lombok</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>ArtifactsTest.version</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-noarg</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>ArtifactsTest.version</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-sam-with-receiver</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>ArtifactsTest.version</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-serialization</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>ArtifactsTest.version</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-assignment</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>ArtifactsTest.version</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

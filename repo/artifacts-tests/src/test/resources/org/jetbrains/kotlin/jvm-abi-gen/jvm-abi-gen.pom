@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>jvm-abi-gen</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Jvm Abi Gen</name>
   <description>ABI generation for Kotlin/JVM</description>
   <url>https://kotlinlang.org/</url>

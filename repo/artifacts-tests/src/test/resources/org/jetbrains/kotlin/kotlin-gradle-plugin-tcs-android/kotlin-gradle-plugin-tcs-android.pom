@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-gradle-plugin-tcs-android</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlin Gradle Plugin Tcs Android</name>
   <description>Kotlin Gradle Plugin Tcs Android</description>
   <url>https://kotlinlang.org/</url>

@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-stdlib-wasm</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <packaging>klib</packaging>
   <name>Kotlin Stdlib Wasm</name>
   <description>Kotlin Standard Library for experimental WebAssembly platform</description>

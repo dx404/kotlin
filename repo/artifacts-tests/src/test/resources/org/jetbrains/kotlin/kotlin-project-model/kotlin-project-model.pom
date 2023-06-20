@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-project-model</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlin Project Model</name>
   <description>Kotlin Project Model</description>
   <url>https://kotlinlang.org/</url>
@@ -29,13 +29,13 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib</artifactId>
-      <version>1.9.255-SNAPSHOT</version>
+      <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-tooling-core</artifactId>
-      <version>1.9.255-SNAPSHOT</version>
+      <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>

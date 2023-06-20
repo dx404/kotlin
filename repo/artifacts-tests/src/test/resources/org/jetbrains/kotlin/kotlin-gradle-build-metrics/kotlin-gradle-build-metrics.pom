@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-gradle-build-metrics</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlin Gradle Build Metrics</name>
   <description>kotlin-gradle-statistics</description>
   <url>https://kotlinlang.org/</url>

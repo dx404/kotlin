@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-scripting-dependencies-maven-all</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlin Scripting Dependencies Maven All</name>
   <description>Shaded Maven dependencies resolver</description>
   <url>https://kotlinlang.org/</url>

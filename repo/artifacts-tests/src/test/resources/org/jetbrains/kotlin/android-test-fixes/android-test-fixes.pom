@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>android-test-fixes</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Android Test Fixes</name>
   <description>Android Test Fixes</description>
   <url>https://kotlinlang.org/</url>

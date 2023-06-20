@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>jvm-abi-gen-embeddable</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Jvm Abi Gen Embeddable</name>
   <description>ABI generation for Kotlin/JVM (for using with embeddable compiler)</description>
   <url>https://kotlinlang.org/</url>

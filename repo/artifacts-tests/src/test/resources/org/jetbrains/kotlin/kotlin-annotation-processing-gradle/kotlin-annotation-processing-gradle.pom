@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-annotation-processing-gradle</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlin Annotation Processing Gradle</name>
   <description>Annotation Processor for Kotlin (for using with embeddable compiler)</description>
   <url>https://kotlinlang.org/</url>

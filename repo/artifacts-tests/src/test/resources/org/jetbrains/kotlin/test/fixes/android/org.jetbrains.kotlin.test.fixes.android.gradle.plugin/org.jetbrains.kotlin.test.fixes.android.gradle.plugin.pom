@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin.test.fixes.android</groupId>
   <artifactId>org.jetbrains.kotlin.test.fixes.android.gradle.plugin</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <packaging>pom</packaging>
   <name>AndroidTestFixes</name>
   <description>AndroidTestFixes</description>
@@ -30,7 +30,7 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>android-test-fixes</artifactId>
-      <version>1.9.255-SNAPSHOT</version>
+      <version>ArtifactsTest.version</version>
     </dependency>
   </dependencies>
 </project>

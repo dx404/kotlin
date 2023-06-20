@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-compiler-args-properties</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlin Compiler Args Properties</name>
   <description>Kotlin Compiler Args Properties</description>
   <url>https://kotlinlang.org/</url>
@@ -34,7 +34,7 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-gradle-plugin-api</artifactId>
-      <version>1.9.255-SNAPSHOT</version>
+      <version>ArtifactsTest.version</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>

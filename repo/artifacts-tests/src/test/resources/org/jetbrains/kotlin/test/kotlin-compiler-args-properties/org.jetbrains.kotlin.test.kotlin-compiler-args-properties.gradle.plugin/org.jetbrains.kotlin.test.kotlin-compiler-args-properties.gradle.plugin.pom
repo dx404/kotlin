@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin.test.kotlin-compiler-args-properties</groupId>
   <artifactId>org.jetbrains.kotlin.test.kotlin-compiler-args-properties.gradle.plugin</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <packaging>pom</packaging>
   <name>GradleKotlinCompilerArgumentsPlugin</name>
   <description>GradleKotlinCompilerArgumentsPlugin</description>
@@ -30,7 +30,7 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-compiler-args-properties</artifactId>
-      <version>1.9.255-SNAPSHOT</version>
+      <version>ArtifactsTest.version</version>
     </dependency>
   </dependencies>
 </project>

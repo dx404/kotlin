@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin.jvm</groupId>
   <artifactId>org.jetbrains.kotlin.jvm.gradle.plugin</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <packaging>pom</packaging>
   <name>Kotlin JVM plugin</name>
   <description>Kotlin JVM plugin</description>
@@ -30,7 +30,7 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-gradle-plugin</artifactId>
-      <version>1.9.255-SNAPSHOT</version>
+      <version>ArtifactsTest.version</version>
     </dependency>
   </dependencies>
 </project>

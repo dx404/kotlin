@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-assignment-compiler-plugin-embeddable</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlin Assignment Compiler Plugin.embeddable</name>
   <description>Kotlin Assignment Compiler Plugin (Embeddable)</description>
   <url>https://kotlinlang.org/</url>

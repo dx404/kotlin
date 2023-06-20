@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-serialization-compiler-plugin</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlinx Serialization Compiler Plugin</name>
   <description>Kotlin Serialization Compiler Plugin</description>
   <url>https://kotlinlang.org/</url>

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin.plugin.atomicfu</groupId>
   <artifactId>org.jetbrains.kotlin.plugin.atomicfu.gradle.plugin</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <packaging>pom</packaging>
   <name>Kotlin compiler plugin for kotlinx.atomicfu library</name>
   <description>Kotlin compiler plugin for kotlinx.atomicfu library</description>
@@ -30,7 +30,7 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>atomicfu</artifactId>
-      <version>1.9.255-SNAPSHOT</version>
+      <version>ArtifactsTest.version</version>
     </dependency>
   </dependencies>
 </project>

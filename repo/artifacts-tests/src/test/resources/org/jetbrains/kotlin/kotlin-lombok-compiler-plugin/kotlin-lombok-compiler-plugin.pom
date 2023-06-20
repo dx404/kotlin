@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-lombok-compiler-plugin</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlin Lombok Compiler Plugin</name>
   <description>Lombok compiler plugin</description>
   <url>https://kotlinlang.org/</url>

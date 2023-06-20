@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin.multiplatform.pm20</groupId>
   <artifactId>org.jetbrains.kotlin.multiplatform.pm20.gradle.plugin</artifactId>
-  <version>1.9.255-SNAPSHOT</version>
+  <version>ArtifactsTest.version</version>
   <packaging>pom</packaging>
   <name>Kotlin Multiplatform plugin with PM2.0</name>
   <description>Kotlin Multiplatform plugin with PM2.0</description>
@@ -30,7 +30,7 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-gradle-plugin</artifactId>
-      <version>1.9.255-SNAPSHOT</version>
+      <version>ArtifactsTest.version</version>
     </dependency>
   </dependencies>
 </project>
