@@ -378,7 +378,7 @@ publishing {
         }
         configureSbom(
             "Main", "kotlin-test",
-            setOf(jvmApi.name, jvmRuntime.name, commonVariant.name), mainPublication
+            setOf(jvmRuntime.name, commonVariant.name), mainPublication
         )
         jvmTestFrameworks.forEach { framework ->
             val publication = register(framework, MavenPublication::class) {
@@ -390,7 +390,7 @@ publishing {
             }
             configureSbom(
                 framework.capitalize(), "kotlin-test-$framework",
-                setOf("${framework}Api"), publication
+                setOf("${framework}Api", commonVariant.name), publication
             )
         }
         val kotlinTestJsPublication = register("js", MavenPublication::class) {
@@ -401,7 +401,7 @@ publishing {
         }
         configureSbom(
             "Js", "kotlin-test-js",
-            setOf(jsRuntime.name), kotlinTestJsPublication
+            setOf(jsRuntime.name, commonVariant.name), kotlinTestJsPublication
         )
         val kotlinTestWasmPublication = register("wasm", MavenPublication::class) {
             artifactId = "kotlin-test-wasm"
@@ -411,7 +411,7 @@ publishing {
         }
         configureSbom(
             "Wasm", "kotlin-test-wasm",
-            setOf(wasmRuntime.name), kotlinTestWasmPublication
+            setOf(wasmRuntime.name, commonVariant.name), kotlinTestWasmPublication
         )
         val kotlinTestCommonPublication = register("common", MavenPublication::class) {
             artifactId = "kotlin-test-common"
