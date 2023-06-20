@@ -145,6 +145,8 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "kotlinc-js",
             "$testDataDirectory/emptyMain.kt",
             "-nowarn",
+            "-libraries",
+            PathUtil.kotlinPathsForCompiler.jsStdLibJarPath.absolutePath,
             "-Xir-produce-klib-dir",
             "-Xir-only",
             "-ir-output-dir",
