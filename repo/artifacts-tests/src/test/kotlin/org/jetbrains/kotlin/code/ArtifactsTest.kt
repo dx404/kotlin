@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.code
 
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
-import java.io.StringReader
-import java.io.StringWriter
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -18,29 +14,26 @@ import kotlin.test.Test
 
 class ArtifactsTest {
 
-    private val mavenReader = MavenXpp3Reader()
-    private val mavenWriter = MavenXpp3Writer()
     private val kotlinVersion = System.getProperty("kotlin.version")
     private val mavenLocal = System.getProperty("maven.repo.local")
-    private val localRepoPath = Paths.get(mavenLocal, "org", "jetbrains", "kotlin")
-    private val expectedRepoPath = Paths.get("repo", "artifacts-tests", "src", "test", "resources", "org", "jetbrains", "kotlin")
-    private val versionRegex = "-\\d+\\.\\d+\\.\\d+(-SNAPSHOT)?".toRegex()
+    private val localRepoPath = Paths.get(mavenLocal, "org/jetbrains/kotlin")
+    private val expectedRepoPath = Paths.get("repo/artifacts-tests/src/test/resources/org/jetbrains/kotlin")
 
-    private fun artifactExtFilter(ext: String): (Path, BasicFileAttributes) -> Boolean {
+    private fun artifactExtFilter(version: String, ext: String): (Path, BasicFileAttributes) -> Boolean {
         return { path: Path, fileAttributes: BasicFileAttributes ->
             fileAttributes.isRegularFile
                     && "${path.fileName}".endsWith(ext, ignoreCase = true)
-                    && path.contains(Paths.get(kotlinVersion))
+                    && path.contains(Paths.get(version))
         }
     }
 
     @Test
     fun verifyArtifactFiles() {
-        val actualPoms = Files.find(localRepoPath, Integer.MAX_VALUE, artifactExtFilter(".pom"))
+        val actualPoms = Files.find(localRepoPath, Integer.MAX_VALUE, artifactExtFilter(kotlinVersion, ".pom"))
         actualPoms.forEach { actual ->
             val expectedPomPath = actual.toExpectedPath()
             val actualString = actual.toFile().readText()
-            assertEqualsToFile(expectedPomPath, actualString, ::pomSanitizer)
+            assertEqualsToFile(expectedPomPath, actualString) { it.replace("ArtifactsTest.version", kotlinVersion) }
         }
     }
 
@@ -51,35 +44,8 @@ class ArtifactsTest {
      * ${expectedRepository}/org/jetbrains/kotlin/artifact/artifact.pom
      */
     private fun Path.toExpectedPath(): Path {
-        val expectedFileName = this.fileName.toString().replace(versionRegex, "")
         val artifactDirPath = localRepoPath.relativize(this).parent.parent
+        val expectedFileName = "${artifactDirPath.fileName}.pom"
         return expectedRepoPath.resolve(artifactDirPath.resolve(expectedFileName))
-    }
-
-    /**
-     * replace a version for each artifact we publish
-     * exception for org.jetbrains.kotlin:kotlin-reflect:1.6.10 where it is required for IDEA compatibility
-     */
-    private fun pomSanitizer(pom: String): String {
-        val model = mavenReader.read(StringReader(pom))
-        if (model.version != null) model.version = kotlinVersion
-        model.dependencies.forEach {
-            if (it.groupId == "org.jetbrains.kotlin") {
-                if (it.artifactId != "kotlin-reflect" && it.version != "1.6.10") {
-                    it.version = kotlinVersion
-                }
-            }
-        }
-        model.dependencyManagement?.dependencies?.forEach {
-            if (it.groupId == "org.jetbrains.kotlin") {
-                if (it.artifactId != "kotlin-reflect" && it.version != "1.6.10") {
-                    it.version = kotlinVersion
-                }
-            }
-        }
-        if (model.parent != null) {
-            model.parent.version = kotlinVersion
-        }
-        return StringWriter().apply { mavenWriter.write(this, model) }.toString()
     }
 }
