@@ -2,9 +2,10 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: JS
-// IGNORE_BACKEND: NATIVE
 // ASSERTIONS_MODE: always-enable
 // WITH_STDLIB
+
+@file:Suppress("OPT_IN_USAGE_ERROR") // ExperimentalNativeApi is defined only in Native
 
 fun checkTrue(): Boolean {
     var hit = false

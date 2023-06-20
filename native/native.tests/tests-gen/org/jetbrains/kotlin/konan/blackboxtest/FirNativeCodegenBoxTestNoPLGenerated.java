@@ -1054,12 +1054,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                 runTest("compiler/testData/codegen/box/assert/alwaysEnable.kt");
             }
 
-            @Test
-            @TestMetadata("alwaysEnable_native.kt")
-            public void testAlwaysEnable_native() throws Exception {
-                runTest("compiler/testData/codegen/box/assert/alwaysEnable_native.kt");
-            }
-
             @Nested
             @TestMetadata("compiler/testData/codegen/box/assert/jvm")
             @TestDataPath("$PROJECT_ROOT")
@@ -37842,12 +37836,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @TestMetadata("kt2246.kt")
             public void testKt2246() throws Exception {
                 runTest("compiler/testData/codegen/box/regressions/kt2246.kt");
-            }
-
-            @Test
-            @TestMetadata("kt2246_native.kt")
-            public void testKt2246_native() throws Exception {
-                runTest("compiler/testData/codegen/box/regressions/kt2246_native.kt");
             }
 
             @Test
