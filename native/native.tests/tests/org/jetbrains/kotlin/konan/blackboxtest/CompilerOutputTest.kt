@@ -93,8 +93,7 @@ class CompilerOutputTest : AbstractNativeSimpleTest() {
             output,
             exitCode,
             dir,
-            // not replace tmpdir to invariant $TMP_DIR$
-            ""
+            dir
         )
     }
 }
