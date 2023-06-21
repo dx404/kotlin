@@ -245,13 +245,9 @@ public final class InTextDirectivesUtils {
     }
 
     public static boolean isIgnoredTarget(@NotNull TargetBackend targetBackend, @NotNull File file, String... ignoreBackendDirectivePrefixes) {
-        return isIgnoredTarget(targetBackend, file, false, ignoreBackendDirectivePrefixes);
-    }
-
-    public static boolean isIgnoredTarget(@NotNull TargetBackend targetBackend, @NotNull File file, boolean includeAny, String... ignoreBackendDirectivePrefixes) {
         List<String> ignoredBackends = findListWithPrefixes(textWithDirectives(file), ignoreBackendDirectivePrefixes);
         if (ignoredBackends.contains(targetBackend.name())) return true;
-        if (includeAny && ignoredBackends.contains("ANY")) return true;
+        if ((targetBackend == TargetBackend.NATIVE || targetBackend == TargetBackend.WASM) && ignoredBackends.contains("ANY")) return true;
         return false;
     }
 
