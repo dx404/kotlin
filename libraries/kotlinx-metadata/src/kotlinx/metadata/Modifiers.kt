@@ -108,7 +108,7 @@ enum class Modality(kind: Int) {
 }
 
 /**
- * Represents the nature of a corresponding class.
+ * Represents the kind of the corresponding class, i.e. the way it is declared in the source code.
  */
 enum class ClassKind(kind: Int) {
     /**
