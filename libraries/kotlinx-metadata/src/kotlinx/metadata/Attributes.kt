@@ -184,7 +184,7 @@ var KmConstructor.isSecondary: Boolean by constructorBooleanFlag(Flag(ProtoFlags
 /**
  * Indicates that the corresponding constructor has non-stable parameter names, i.e., cannot be called with named arguments.
  *
- * Currently, this attribute is Native-specific and is never set by Kotlin/JVM compiler.
+ * Currently, this attribute is Kotlin/Native-specific and is never set by Kotlin/JVM compiler.
  * This may be changed in the future.
  */
 var KmConstructor.hasNonStableParameterNames: Boolean by constructorBooleanFlag(Flag(ProtoFlags.IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES))
