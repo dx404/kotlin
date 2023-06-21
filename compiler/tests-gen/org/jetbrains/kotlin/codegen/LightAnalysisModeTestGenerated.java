@@ -26953,6 +26953,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/superCall.kt");
             }
 
+            @TestMetadata("typeAlias2.kt")
+            public void ignoreTypeAlias2() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias2.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -27076,11 +27081,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias.kt");
             }
 
-            @TestMetadata("typeAlias2.kt")
-            public void testTypeAlias2() throws Exception {
-                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias2.kt");
-            }
-
             @TestMetadata("withTypeParameter.kt")
             public void testWithTypeParameter() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/withTypeParameter.kt");
@@ -27182,6 +27182,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Basic extends AbstractLightAnalysisModeTest {
+                @TestMetadata("anyMethodInExpect.kt")
+                public void ignoreAnyMethodInExpect() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/anyMethodInExpect.kt");
+                }
+
                 @TestMetadata("expectActualFakeOverrides2.kt")
                 public void ignoreExpectActualFakeOverrides2() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverrides2.kt");
@@ -27253,11 +27258,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
                 public void testAllFilesPresentInBasic() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/basic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-                }
-
-                @TestMetadata("anyMethodInExpect.kt")
-                public void testAnyMethodInExpect() throws Exception {
-                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/anyMethodInExpect.kt");
                 }
 
                 @TestMetadata("correctParentForTypeParameter.kt")

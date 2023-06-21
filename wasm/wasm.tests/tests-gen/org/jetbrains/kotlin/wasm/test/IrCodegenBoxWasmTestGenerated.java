@@ -2976,6 +2976,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             public void testAllFilesPresentInSerializability() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/serializability"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
+
+            @TestMetadata("referenceToCompanionFunction.kt")
+            public void testReferenceToCompanionFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/serializability/referenceToCompanionFunction.kt");
+            }
         }
     }
 
