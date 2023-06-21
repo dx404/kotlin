@@ -21,7 +21,7 @@ fun benchMark(provider: WorkloadProvider<*>): List<Double> {
     GC.collect()
     val pauses = GCStat.withStats { gcstat ->
         var sum: Long = 0
-        while (gcstat.recorded.size < 10) {
+        while (gcstat.recorded.size < 20) {
             GC.collect()
             sum += fact(1_000_000)
         }
@@ -37,7 +37,7 @@ fun benchMark(provider: WorkloadProvider<*>): List<Double> {
 
 
 class MemoryBenchmarkLauncher : Launcher() {
-    val workloads = listOf(ArrayWorkload, LinkedList, Life)
+    val workloads = listOf(ArrayWorkload, LinkedList, Life, Empty)
 
     override val baseBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry> = workloads.map {
         "mark::${it.name()}" to BenchmarkEntryManual({ benchMark(it) })
