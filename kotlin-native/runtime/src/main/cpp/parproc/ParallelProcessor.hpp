@@ -12,6 +12,7 @@
 #include "Porting.h"
 #include "PushOnlyAtomicArray.hpp"
 #include "SplitSharedList.hpp"
+#include "BoundedQueue.hpp"
 
 namespace kotlin {
 
@@ -31,6 +32,44 @@ enum class ShareOn { kPush, kPop };
  */
 template <std::size_t kMaxWorkers, typename ListImpl, std::size_t kMinSizeToShare, std::size_t kMaxSizeToSteal = kMinSizeToShare / 2, internal::ShareOn kShareOn = internal::ShareOn::kPush>
 class ParallelProcessor : private Pinned {
+
+    // TODO move inside Batch
+    static const std::size_t kBatchCapacity = 512; // TODO choose
+
+    class Batch {
+    public:
+        bool empty() const noexcept {
+            return elems_.empty();
+        }
+
+        bool full() const noexcept {
+            return size_ == kBatchCapacity;
+        }
+
+        bool tryPush(typename ListImpl::reference value) noexcept {
+            if (full()) return false; // FIXME replace with assert?
+
+            bool pushed = elems_.try_push_front(value);
+            if (pushed) {
+                ++size_;
+            }
+            return pushed;
+        }
+
+        typename ListImpl::pointer tryPop() noexcept {
+            auto popped = elems_.try_pop_front();
+            if (popped) {
+                --size_;
+            }
+            return popped;
+        }
+
+        // FIXME replace with methods
+    public: // FIXME private
+        ListImpl elems_;
+        std::size_t size_ = 0;
+    };
+
 public:
     static const std::size_t kStealingAttemptCyclesBeforeWait = 4;
 
@@ -42,76 +81,45 @@ public:
         }
 
         ALWAYS_INLINE bool empty() const noexcept {
-            return list_.localEmpty() && list_.sharedEmpty();
+            return batch_.empty(); // TODO what about shared?
         }
 
         ALWAYS_INLINE bool tryPushLocal(typename ListImpl::reference value) noexcept {
-            return list_.tryPushLocal(value);
+            TODO("local ops");
         }
 
         ALWAYS_INLINE bool tryPush(typename ListImpl::reference value) noexcept {
-            bool pushed = tryPushLocal(value);
-            if (pushed && kShareOn == internal::ShareOn::kPush) {
-                shareAll();
+            if (batch_.full()) {
+                dispatcher_.releaseBatch(std::move(batch_));
+                batch_ = Batch{};
             }
-            return pushed;
+            return batch_.tryPush(value);
         }
 
         ALWAYS_INLINE typename ListImpl::pointer tryPopLocal() noexcept {
-            return list_.tryPopLocal();
+            TODO("local ops");
         }
 
         ALWAYS_INLINE typename ListImpl::pointer tryPop() noexcept {
-            while (true) {
-                if (auto popped = tryPopLocal()) {
-                    if (kShareOn == internal::ShareOn::kPop) {
-                        shareAll();
+            if (batch_.empty()) {
+                while (true) {
+                    bool acquired = dispatcher_.acquireBatch(batch_);
+                    if (!acquired) {
+                        bool newWorkAvailable = waitForMoreWork();
+                        if (newWorkAvailable) continue;
+                        return nullptr;
                     }
-                    return popped;
+                    RuntimeAssert(!batch_.empty(), "Must acquire smth");
+                    break;
                 }
-                if (tryAcquireWork()) {
-                    continue;
-                }
-                break;
             }
-            return nullptr;
+
+            return batch_.tryPop();
         }
 
     private:
-        bool tryTransferFromLocal() noexcept {
-            auto transferred = list_.tryTransferFrom(list_, kMaxSizeToSteal);
-            if (transferred > 0) {
-                RuntimeLogDebug({"balancing"}, "Worker has acquired %zu tasks from itself", transferred);
-                return true;
-            }
-            return false;
-        }
-
-        bool tryTransferFromCooperating() {
-            for (size_t i = 0; i < kStealingAttemptCyclesBeforeWait; ++i) {
-                for (auto& fromAtomic : dispatcher_.registeredWorkers_) {
-                    auto& from = *fromAtomic.load(std::memory_order_relaxed);
-                    auto transferred = list_.tryTransferFrom(from.list_, kMaxSizeToSteal);
-                    if (transferred > 0) {
-                        RuntimeLogDebug({"balancing"}, "Worker has acquired %zu tasks from %d", transferred, from.carrierThreadId_);
-                        return true;
-                    }
-                }
-                std::this_thread::yield();
-            }
-            return false;
-        }
-
-        bool tryAcquireWork() noexcept {
-            if (tryTransferFromLocal()) return true;
-            if (tryTransferFromCooperating()) return true;
-
-            RuntimeLogDebug({"balancing"}, "Worker has not found a victim to steal from :(");
-
-            return waitForMoreWork();
-        }
-
         bool waitForMoreWork() noexcept {
+            RuntimeAssert(batch_.empty(), "Must be empty");
             std::unique_lock lock(dispatcher_.waitMutex_);
 
             auto nowWaiting = dispatcher_.waitingWorkers_.fetch_add(1, std::memory_order_relaxed) + 1;
@@ -143,18 +151,10 @@ public:
             return true;
         }
 
-        void shareAll() noexcept {
-            if (list_.localSize() > kMinSizeToShare) {
-                auto shared = list_.shareAllWith(list_);
-                if (shared > 0) {
-                    dispatcher_.onShare(shared);
-                }
-            }
-        }
-
         const int carrierThreadId_ = konan::currentThreadId();
         ParallelProcessor& dispatcher_;
-        SplitSharedList<ListImpl> list_;
+
+        Batch batch_;
     };
 
     ParallelProcessor() = default;
@@ -199,6 +199,38 @@ private:
     std::atomic<bool> allDone_ = false;
     mutable std::mutex waitMutex_;
     mutable std::condition_variable waitCV_;
+
+    void releaseBatch(Batch&& batch) {
+        RuntimeAssert(!batch.empty(), "must not be empty"); // TODO assert msgs
+        auto size = batch.size_; // TODO remove?
+        bool enqueued = batches_.enqueue(std::move(batch)); // TODO forward?
+        if (!enqueued) {
+            std::unique_lock guard(overflowMutex_);
+            overflowSet_.splice_after(overflowSet_.before_begin(), batch.elems_.before_begin(), batch.elems_.end(), std::numeric_limits<std::size_t>::max()); // FIXME max?
+        }
+        onShare(size);
+    }
+
+    bool acquireBatch(Batch& dst) {
+        RuntimeAssert(dst.empty(), "must be empty");
+        bool dequeued = batches_.dequeue(dst);
+        if (dequeued) return true;
+
+        RuntimeAssert(dst.empty(), "must be empty");
+        // TODO if overflow is empty?
+        std::unique_lock guard(overflowMutex_);
+        std::size_t spliced = dst.elems_.splice_after(dst.elems_.before_begin(),
+                                                      overflowSet_.before_begin(),
+                                                      overflowSet_.end(),
+                                                      kBatchCapacity);
+        dst.size_ = spliced;
+        return spliced > 0;
+    }
+
+    mpmc_bounded_queue<Batch, 1024 * 8> batches_;
+
+    std::mutex overflowMutex_;
+    ListImpl overflowSet_;
 };
 
 }
