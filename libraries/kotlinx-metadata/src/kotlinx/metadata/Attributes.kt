@@ -337,7 +337,7 @@ var KmProperty.isExternal: Boolean by propertyBooleanFlag(Flag(ProtoFlags.IS_EXT
  * Indicates that the corresponding property is a delegated property.
  *
  * Do not confuse with interface delegation.
- * If property was produced by interface delegation, it would have corresponding [KmProperty.kind].
+ * If a property was produced by interface delegation, it would have the corresponding [KmProperty.kind].
  */
 var KmProperty.isDelegated: Boolean by propertyBooleanFlag(Flag(ProtoFlags.IS_DELEGATED))
 
