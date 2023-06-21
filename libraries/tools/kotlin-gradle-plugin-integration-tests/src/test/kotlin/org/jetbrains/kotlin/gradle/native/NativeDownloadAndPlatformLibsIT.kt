@@ -176,7 +176,7 @@ class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
     @Test
     fun testSettingGenerationMode() = with(platformLibrariesProject("linuxX64")) {
         // Check that user can change generation mode used by the cinterop tool.
-        buildWithLightDist("tasks", "-Pkotlin.native.platform.libraries.mode=metadata") {
+        buildWithLightDist("tasks") {
             assertSuccessful()
             assertTrue(
                 extractNativeCompilerCommandLineArguments(
