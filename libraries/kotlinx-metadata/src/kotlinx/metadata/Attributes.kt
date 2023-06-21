@@ -251,7 +251,7 @@ var KmFunction.isExpect: Boolean by functionBooleanFlag(Flag(ProtoFlags.IS_EXPEC
 /**
  * Indicates that the corresponding function has non-stable parameter names, i.e., cannot be called with named arguments.
  *
- * Currently, this attribute is Native-specific and is never set by Kotlin/JVM compiler.
+ * Currently, this attribute is Kotlin/Native-specific and is never set by Kotlin/JVM compiler.
  * This may be changed in the future.
  */
 var KmFunction.hasNonStableParameterNames: Boolean by functionBooleanFlag(Flag(ProtoFlags.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES))
