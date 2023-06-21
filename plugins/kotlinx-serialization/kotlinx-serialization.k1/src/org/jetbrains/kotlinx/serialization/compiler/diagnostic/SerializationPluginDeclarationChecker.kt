@@ -441,6 +441,14 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             if (serializer != null) {
                 val element = ktType?.typeElement
                 checkCustomSerializerMatch(it.module, it.type, it.descriptor, element, trace, propertyPsi)
+                checkCustomSerializerNotAbstract(
+                    it.module,
+                    it.type,
+                    it.descriptor,
+                    it.descriptor.findSerializableOrMetaAnnotationDeclaration(),
+                    trace,
+                    propertyPsi
+                )
                 checkCustomSerializerIsNotLocal(it.module, it.descriptor, trace, propertyPsi)
                 checkSerializerNullability(it.type, serializer.defaultType, element, trace, propertyPsi)
                 generatorContextForAnalysis.checkTypeArguments(it.module, it.type, element, trace, propertyPsi)

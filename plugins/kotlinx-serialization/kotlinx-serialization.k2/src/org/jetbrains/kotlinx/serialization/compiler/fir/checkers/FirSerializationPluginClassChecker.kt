@@ -472,6 +472,12 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
                     customSerializerType,
                     reporter
                 )
+                checkCustomSerializerNotAbstract(
+                    classSymbol,
+                    source = propertySymbol.serializableAnnotation(needArguments = false, session)?.source,
+                    customSerializerType,
+                    reporter
+                )
                 checkCustomSerializerIsNotLocal(
                     source = propertySymbol.serializableAnnotation(needArguments = false, session)?.source,
                     classSymbol,
