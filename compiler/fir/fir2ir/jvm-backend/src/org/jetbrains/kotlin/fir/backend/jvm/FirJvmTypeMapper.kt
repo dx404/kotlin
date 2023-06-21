@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.load.kotlin.internalName
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.AbstractTypeMapper
 import org.jetbrains.kotlin.types.TypeMappingContext
@@ -82,7 +83,9 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
 
         override fun getClassInternalName(typeConstructor: TypeConstructorMarker): String {
             require(typeConstructor is ConeClassLikeLookupTag)
-            return typeConstructor.classId.asString().replace(".", "$").replace("/", ".")
+            val classId = typeConstructor.classId
+            val name = if (classId.isLocal) safeShortClassName(classId) else classId.asString()
+            return name.replace(".", "$").replace("/", ".")
         }
 
         override fun getScriptInternalName(typeConstructor: TypeConstructorMarker): String =
@@ -230,7 +233,11 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
         val result = runUnless(classId.isLocal) {
             classId.asSingleFqName().toUnsafe().let { JavaToKotlinClassMap.mapKotlinToJava(it)?.shortClassName?.asString() }
         }
-        return result ?: SpecialNames.safeIdentifier(classId.shortClassName).identifier
+        return result ?: safeShortClassName(classId)
+    }
+
+    private fun safeShortClassName(classId: ClassId): String {
+        return SpecialNames.safeIdentifier(classId.shortClassName).identifier
     }
 }
 
