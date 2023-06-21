@@ -342,12 +342,14 @@ extern "C" void Kotlin_native_internal_GC_start(ObjHeader*) {
 }
 
 extern "C" void Kotlin_native_internal_GC_setThreshold(ObjHeader*, KInt value) {
-    RuntimeAssert(value > 0, "Must be handled by the caller");
-    mm::GlobalData::Instance().gcScheduler().config().threshold = value;
+    // TODO: Remove when legacy MM is gone.
+    // Nothing to do
 }
 
 extern "C" KInt Kotlin_native_internal_GC_getThreshold(ObjHeader*) {
-    return mm::GlobalData::Instance().gcScheduler().config().threshold.load();
+    // TODO: Remove when legacy MM is gone.
+    // Nothing to do
+    return 0;
 }
 
 extern "C" void Kotlin_native_internal_GC_setCollectCyclesThreshold(ObjHeader*, int64_t value) {
@@ -362,12 +364,14 @@ extern "C" int64_t Kotlin_native_internal_GC_getCollectCyclesThreshold(ObjHeader
 }
 
 extern "C" void Kotlin_native_internal_GC_setThresholdAllocations(ObjHeader*, int64_t value) {
-    RuntimeAssert(value > 0, "Must be handled by the caller");
-    mm::GlobalData::Instance().gcScheduler().config().allocationThresholdBytes = value;
+    // TODO: Remove when legacy MM is gone.
+    // Nothing to do
 }
 
 extern "C" int64_t Kotlin_native_internal_GC_getThresholdAllocations(ObjHeader*) {
-    return mm::GlobalData::Instance().gcScheduler().config().allocationThresholdBytes.load();
+    // TODO: Remove when legacy MM is gone.
+    // Nothing to do
+    return 0;
 }
 
 extern "C" void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, KBoolean value) {
@@ -543,14 +547,14 @@ extern "C" void CheckGlobalsAccessible() {
 extern "C" RUNTIME_NOTHROW NO_INLINE void Kotlin_mm_safePointFunctionPrologue() {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->gcScheduler().OnSafePointRegular(gcScheduler::GCSchedulerThreadData::kFunctionPrologueWeight);
+    mm::GlobalData::Instance().gcScheduler().OnSafePoint();
     threadData->gc().SafePointFunctionPrologue();
 }
 
 extern "C" RUNTIME_NOTHROW CODEGEN_INLINE_POLICY void Kotlin_mm_safePointWhileLoopBody() {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->gcScheduler().OnSafePointRegular(gcScheduler::GCSchedulerThreadData::kLoopBodyWeight);
+    mm::GlobalData::Instance().gcScheduler().OnSafePoint();
     threadData->gc().SafePointLoopBody();
 }
 
@@ -628,4 +632,8 @@ RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_RegularWeakReferenceImpl_get, ObjHea
 
 RUNTIME_NOTHROW extern "C" void DisposeRegularWeakReferenceImpl(ObjHeader* weakRef) {
     mm::disposeRegularWeakReferenceImpl(weakRef);
+}
+
+void kotlin::OnMemoryAllocation(size_t totalAllocatedBytes) noexcept {
+    mm::GlobalData::Instance().gcScheduler().gcData().SetAllocatedBytes(totalAllocatedBytes);
 }

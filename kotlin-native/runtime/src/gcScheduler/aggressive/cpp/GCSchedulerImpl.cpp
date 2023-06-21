@@ -12,8 +12,8 @@
 
 using namespace kotlin;
 
-void gcScheduler::GCSchedulerThreadData::OnSafePointRegular(size_t weight) noexcept {
-    OnSafePointRegularImpl(weight);
+ALWAYS_INLINE void gcScheduler::GCScheduler::OnSafePoint() noexcept {
+    static_cast<internal::GCSchedulerDataAggressive&>(gcData()).OnSafePoint();
 }
 
 gcScheduler::GCScheduler::GCScheduler() noexcept :

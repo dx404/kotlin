@@ -99,14 +99,12 @@ public object GC {
     external fun start()
 
     /**
-     * GC threshold, controlling how frequenly GC is activated, and how much time GC
+     * Deprecated and unused.
+     *
+     * Legacy MM: GC threshold, controlling how frequenly GC is activated, and how much time GC
      * takes. Bigger values lead to longer GC pauses, but less GCs.
-     * Usually unused. For the on-safepoints GC scheduler counts
-     *         how many safepoints must the code pass before informing the GC scheduler.
      *
-     * Default: (old MM) 8 * 1024
-     *
-     * Default: (new MM) 100000
+     * Default: 8 * 1024
      *
      * @throws [IllegalArgumentException] when value is not positive.
      */
@@ -136,14 +134,12 @@ public object GC {
         }
 
     /**
-     * How many bytes a thread can allocate before informing the GC scheduler.
-     *
-     * Default: 10 * 1024
+     * Deprecated and unused.
      *
      * Legacy MM: GC allocation threshold, controlling how many bytes allocated since last
      * collection will trigger new GC.
      *
-     * Default: (legacy MM) 8 * 1024 * 1024
+     * Default: 8 * 1024 * 1024
      *
      * @throws [IllegalArgumentException] when value is not positive.
      */

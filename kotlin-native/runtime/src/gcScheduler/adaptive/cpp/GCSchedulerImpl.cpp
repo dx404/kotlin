@@ -12,7 +12,7 @@
 
 using namespace kotlin;
 
-void gcScheduler::GCSchedulerThreadData::OnSafePointRegular(size_t weight) noexcept {}
+ALWAYS_INLINE void gcScheduler::GCScheduler::OnSafePoint() noexcept {}
 
 gcScheduler::GCScheduler::GCScheduler() noexcept :
     gcData_(std_support::make_unique<internal::GCSchedulerDataAdaptive<steady_clock>>(config_, []() noexcept {

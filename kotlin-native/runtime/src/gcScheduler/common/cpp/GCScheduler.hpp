@@ -26,9 +26,6 @@ class GCSchedulerData {
 public:
     virtual ~GCSchedulerData() = default;
 
-    // Called by different mutator threads.
-    virtual void UpdateFromThreadData(GCSchedulerThreadData& threadData) noexcept = 0;
-
     // The protocol is: after the scheduler schedules the GC, the GC eventually calls `OnPerformFullGC`
     // when the collection has started, followed by `UpdateAliveSetBytes` when the marking has finished.
     // TODO: Consider returning a sort of future from the scheduleGC, and listen to it instead.
@@ -38,68 +35,9 @@ public:
 
     // Always called by the GC thread.
     virtual void UpdateAliveSetBytes(size_t bytes) noexcept = 0;
-};
 
-class GCSchedulerThreadData {
-public:
-    static constexpr size_t kFunctionPrologueWeight = 1;
-    static constexpr size_t kLoopBodyWeight = 1;
-
-    explicit GCSchedulerThreadData(GCSchedulerConfig& config, std::function<void(GCSchedulerThreadData&)> slowPath) noexcept :
-        config_(config), slowPath_(std::move(slowPath)) {
-        ClearCountersAndUpdateThresholds();
-    }
-
-    // Should be called on encountering a safepoint.
-    void OnSafePointRegular(size_t weight) noexcept;
-
-    // Should be called on encountering a safepoint placed by the allocator.
-    // TODO: Should this even be a safepoint (i.e. a place, where we suspend)?
-    void OnSafePointAllocation(size_t size) noexcept {
-        allocatedBytes_ += size;
-        if (allocatedBytes_ < allocatedBytesThreshold_) {
-            return;
-        }
-        OnSafePointSlowPath();
-    }
-
-    void OnStoppedForGC() noexcept { ClearCountersAndUpdateThresholds(); }
-
-    size_t allocatedBytes() const noexcept { return allocatedBytes_; }
-
-    size_t safePointsCounter() const noexcept { return safePointsCounter_; }
-
-private:
-    friend class test_support::GCSchedulerThreadDataTestApi;
-
-    void OnSafePointRegularImpl(size_t weight) noexcept {
-        safePointsCounter_ += weight;
-        if (safePointsCounter_ < safePointsCounterThreshold_) {
-            return;
-        }
-        OnSafePointSlowPath();
-    }
-
-    void OnSafePointSlowPath() noexcept {
-        slowPath_(*this);
-        ClearCountersAndUpdateThresholds();
-    }
-
-    void ClearCountersAndUpdateThresholds() noexcept {
-        allocatedBytes_ = 0;
-        safePointsCounter_ = 0;
-
-        allocatedBytesThreshold_ = config_.allocationThresholdBytes;
-        safePointsCounterThreshold_ = config_.threshold;
-    }
-
-    GCSchedulerConfig& config_;
-    std::function<void(GCSchedulerThreadData&)> slowPath_;
-
-    size_t allocatedBytes_ = 0;
-    size_t allocatedBytesThreshold_ = 0;
-    size_t safePointsCounter_ = 0;
-    size_t safePointsCounterThreshold_ = 0;
+    // Called by different mutator threads.
+    virtual void SetAllocatedBytes(size_t bytes) noexcept = 0;
 };
 
 class GCScheduler : private Pinned {
@@ -109,9 +47,8 @@ public:
     GCSchedulerConfig& config() noexcept { return config_; }
     GCSchedulerData& gcData() noexcept { return *gcData_; }
 
-    GCSchedulerThreadData NewThreadData() noexcept {
-        return GCSchedulerThreadData(config_, [this](auto& threadData) { gcData_->UpdateFromThreadData(threadData); });
-    }
+    // Should be called on encountering a safepoint.
+    void OnSafePoint() noexcept;
 
 private:
     GCSchedulerConfig config_;
