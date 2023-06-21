@@ -325,6 +325,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         val annotationPsi = descriptor.findSerializableOrMetaAnnotationDeclaration()
         checkCustomSerializerMatch(descriptor.module, descriptor.defaultType, descriptor, annotationPsi, trace, declaration)
         checkCustomSerializerIsNotLocal(descriptor.module, descriptor, trace, declaration)
+        checkCustomSerializerNotAbstract(descriptor.module, descriptor.defaultType, descriptor, annotationPsi, trace, declaration)
     }
 
     private val ClassDescriptor.isAnonymousObjectOrContained: Boolean
@@ -516,6 +517,26 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                 // enums are always serializable
                 trace.report(SerializationErrors.SERIALIZER_NOT_FOUND.on(element ?: fallbackElement, type))
             }
+        }
+    }
+
+    private fun checkCustomSerializerNotAbstract(
+        module: ModuleDescriptor,
+        classType: KotlinType,
+        descriptor: Annotated,
+        element: KtElement?,
+        trace: BindingTrace,
+        fallbackElement: PsiElement
+    ) {
+        val serializerType = descriptor.annotations.serializableWith(module) ?: return
+        if (serializerType.toClassDescriptor?.isAbstractOrSealedOrInterface == true) {
+            trace.report(
+                SerializationErrors.ABSTRACT_SERIALIZER_TYPE.on(
+                    element ?: fallbackElement,
+                    classType,
+                    serializerType
+                )
+            )
         }
     }
 

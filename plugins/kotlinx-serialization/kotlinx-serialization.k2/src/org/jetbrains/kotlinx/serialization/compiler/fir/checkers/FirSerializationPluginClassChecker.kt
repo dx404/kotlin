@@ -363,6 +363,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
         val serializerType = classSymbol.getSerializableWith(session)?.fullyExpandedType(session) ?: return
         checkCustomSerializerMatch(classSymbol, source = null, classSymbol.defaultType(), serializerType, reporter)
         checkCustomSerializerIsNotLocal(source = null, classSymbol, serializerType, reporter)
+        checkCustomSerializerNotAbstract(classSymbol, source = null, serializerType, reporter)
     }
 
     context(CheckerContext)
@@ -563,6 +564,22 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
                 containingClassSymbol.defaultType(),
                 serializerType,
                 serializerForType
+            )
+        }
+    }
+    context(CheckerContext)
+    private fun checkCustomSerializerNotAbstract(
+        containingClassSymbol: FirClassSymbol<*>,
+        source: KtSourceElement?,
+        serializerType: ConeKotlinType,
+        reporter: DiagnosticReporter
+    ) {
+        if (with(session) { serializerType.isAbstractOrSealedOrInterface }) {
+            reporter.reportOn(
+                source ?: containingClassSymbol.serializableOrMetaAnnotationSource,
+                FirSerializationErrors.ABSTRACT_SERIALIZER_TYPE,
+                containingClassSymbol.defaultType(),
+                serializerType
             )
         }
     }
