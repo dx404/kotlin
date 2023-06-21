@@ -1616,6 +1616,44 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/builderInference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class BuilderInference extends AbstractIrCodegenBoxWasmTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInBuilderInference() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @TestMetadata("InsideAnonymousFunction.kt")
+        public void testInsideAnonymousFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/InsideAnonymousFunction.kt");
+        }
+
+        @TestMetadata("InsideLambdaLiteralWithGenericArgument.kt")
+        public void testInsideLambdaLiteralWithGenericArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/InsideLambdaLiteralWithGenericArgument.kt");
+        }
+
+        @TestMetadata("InsideLambdaLiteralWithGenericReceiver.kt")
+        public void testInsideLambdaLiteralWithGenericReceiver() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/InsideLambdaLiteralWithGenericReceiver.kt");
+        }
+
+        @TestMetadata("InsideLambdaLiteralWithTwiceGenericReceiverAA.kt")
+        public void testInsideLambdaLiteralWithTwiceGenericReceiverAA() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/InsideLambdaLiteralWithTwiceGenericReceiverAA.kt");
+        }
+
+        @TestMetadata("InsideLambdaLiteralWithTwiceGenericReceiverAB.kt")
+        public void testInsideLambdaLiteralWithTwiceGenericReceiverAB() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/InsideLambdaLiteralWithTwiceGenericReceiverAB.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

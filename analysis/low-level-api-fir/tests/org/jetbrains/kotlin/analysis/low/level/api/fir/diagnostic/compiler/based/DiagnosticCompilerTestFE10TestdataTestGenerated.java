@@ -3188,6 +3188,52 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/builderInference")
+        @TestDataPath("$PROJECT_ROOT")
+        public class BuilderInference {
+            @Test
+            public void testAllFilesPresentInBuilderInference() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            }
+
+            @Test
+            @TestMetadata("InsideAnonymousFunction.kt")
+            public void testInsideAnonymousFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/builderInference/InsideAnonymousFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("NoBuilderInference.kt")
+            public void testNoBuilderInference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/builderInference/NoBuilderInference.kt");
+            }
+
+            @Test
+            @TestMetadata("UnknownTypeInsideLambdaLiteralWIthTwiceGenericReceiverAA.kt")
+            public void testUnknownTypeInsideLambdaLiteralWIthTwiceGenericReceiverAA() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/builderInference/UnknownTypeInsideLambdaLiteralWIthTwiceGenericReceiverAA.kt");
+            }
+
+            @Test
+            @TestMetadata("UnknownTypeInsideLambdaLiteralWIthTwiceGenericReceiverAB.kt")
+            public void testUnknownTypeInsideLambdaLiteralWIthTwiceGenericReceiverAB() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/builderInference/UnknownTypeInsideLambdaLiteralWIthTwiceGenericReceiverAB.kt");
+            }
+
+            @Test
+            @TestMetadata("UnknownTypeInsideLambdaLiteralWithGenericArgument.kt")
+            public void testUnknownTypeInsideLambdaLiteralWithGenericArgument() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/builderInference/UnknownTypeInsideLambdaLiteralWithGenericArgument.kt");
+            }
+
+            @Test
+            @TestMetadata("UnknownTypeInsideLambdaLiteralWithGenericReceiver.kt")
+            public void testUnknownTypeInsideLambdaLiteralWithGenericReceiver() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/builderInference/UnknownTypeInsideLambdaLiteralWithGenericReceiver.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/callableReference")
         @TestDataPath("$PROJECT_ROOT")
         public class CallableReference {

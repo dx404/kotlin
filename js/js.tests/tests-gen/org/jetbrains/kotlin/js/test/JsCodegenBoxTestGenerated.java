@@ -1775,6 +1775,46 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/builderInference")
+    @TestDataPath("$PROJECT_ROOT")
+    public class BuilderInference {
+        @Test
+        public void testAllFilesPresentInBuilderInference() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+        }
+
+        @Test
+        @TestMetadata("InsideAnonymousFunction.kt")
+        public void testInsideAnonymousFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/InsideAnonymousFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("InsideLambdaLiteralWithGenericArgument.kt")
+        public void testInsideLambdaLiteralWithGenericArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/InsideLambdaLiteralWithGenericArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("InsideLambdaLiteralWithGenericReceiver.kt")
+        public void testInsideLambdaLiteralWithGenericReceiver() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/InsideLambdaLiteralWithGenericReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("InsideLambdaLiteralWithTwiceGenericReceiverAA.kt")
+        public void testInsideLambdaLiteralWithTwiceGenericReceiverAA() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/InsideLambdaLiteralWithTwiceGenericReceiverAA.kt");
+        }
+
+        @Test
+        @TestMetadata("InsideLambdaLiteralWithTwiceGenericReceiverAB.kt")
+        public void testInsideLambdaLiteralWithTwiceGenericReceiverAB() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/InsideLambdaLiteralWithTwiceGenericReceiverAB.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")
     @TestDataPath("$PROJECT_ROOT")
     public class BuiltinStubMethods {
