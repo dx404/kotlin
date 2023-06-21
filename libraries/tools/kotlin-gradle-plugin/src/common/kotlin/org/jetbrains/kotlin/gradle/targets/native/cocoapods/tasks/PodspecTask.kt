@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.Cocoapods
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.PodspecPlatformSettings
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.GENERATE_WRAPPER_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_INSTALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -130,7 +131,22 @@ abstract class PodspecTask @Inject constructor(private val projectLayout: Projec
 
         val frameworkDir = projectLayout.cocoapodsBuildDirs.framework.getFile().relativeTo(outputFile.parentFile)
         val vendoredFramework = if (publishing.get()) "${frameworkName.get()}.xcframework" else frameworkDir.resolve("${frameworkName.get()}.framework").invariantSeparatorsPath
-        val vendoredFrameworks = if (extraSpecAttributes.get().containsKey("vendored_frameworks")) "" else "|    spec.vendored_frameworks      = '$vendoredFramework'"
+        val vendoredFrameworksOverridden = extraSpecAttributes.get().containsKey("vendored_frameworks")
+        val vendoredFrameworks = if (vendoredFrameworksOverridden) "" else "|    spec.vendored_frameworks      = '$vendoredFramework'"
+
+        val vendoredFrameworkExistenceCheck = if (vendoredFrameworksOverridden || publishing.get()) "" else
+            """ |
+                |    if !Dir.exist?('$vendoredFramework') || Dir.empty?('$vendoredFramework')
+                |        raise "
+                |
+                |        Kotlin framework '${frameworkName.get()}' doesn't exist yet, so a proper Xcode project can't be generated.
+                |        Initial 'pod install' should be performed using ':$POD_INSTALL_TASK_NAME' Gradle task:
+                |
+                |            ./gradlew ${projectPath.get()}:$POD_INSTALL_TASK_NAME
+                |
+                |        Alternatively, proper pod installation is done during Gradle sync in the IDE"
+                |    end
+            """.trimMargin()
 
         val libraries = if (extraSpecAttributes.get().containsKey("libraries")) "" else "|    spec.libraries                = 'c++'"
 
@@ -182,6 +198,7 @@ abstract class PodspecTask @Inject constructor(private val projectLayout: Projec
                 $libraries
                 $deploymentTargets
                 $dependencies
+                $vendoredFrameworkExistenceCheck
                 $xcConfig
                 $scriptPhase
                 $customSpec
