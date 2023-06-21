@@ -9,7 +9,6 @@ dependencies {
     testImplementation(kotlinStdlib("jdk8"))
     testImplementation(project(":kotlin-test:kotlin-test-junit5"))
     testApiJUnit5()
-    testImplementation("org.apache.maven:maven-model:3.9.0")
     testImplementation(projectTests(":compiler:tests-common-new"))
 }
 

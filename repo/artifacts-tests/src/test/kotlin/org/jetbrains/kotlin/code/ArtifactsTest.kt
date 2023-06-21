@@ -11,6 +11,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class ArtifactsTest {
 
@@ -19,21 +20,33 @@ class ArtifactsTest {
     private val localRepoPath = Paths.get(mavenLocal, "org/jetbrains/kotlin")
     private val expectedRepoPath = Paths.get("repo/artifacts-tests/src/test/resources/org/jetbrains/kotlin")
 
-    private fun artifactExtFilter(version: String, ext: String): (Path, BasicFileAttributes) -> Boolean {
-        return { path: Path, fileAttributes: BasicFileAttributes ->
-            fileAttributes.isRegularFile
-                    && "${path.fileName}".endsWith(ext, ignoreCase = true)
-                    && path.contains(Paths.get(version))
-        }
-    }
-
     @Test
     fun verifyArtifactFiles() {
-        val actualPoms = Files.find(localRepoPath, Integer.MAX_VALUE, artifactExtFilter(kotlinVersion, ".pom"))
+        val visitedPoms = mutableSetOf<Path>()
+        val actualPoms = Files.find(
+            localRepoPath,
+            Integer.MAX_VALUE,
+            { path: Path, fileAttributes: BasicFileAttributes ->
+                fileAttributes.isRegularFile
+                        && "${path.fileName}".endsWith(".pom", ignoreCase = true)
+                        && path.contains(Paths.get(kotlinVersion))
+            })
         actualPoms.forEach { actual ->
             val expectedPomPath = actual.toExpectedPath()
             val actualString = actual.toFile().readText()
             assertEqualsToFile(expectedPomPath, actualString) { it.replace("ArtifactsTest.version", kotlinVersion) }
+            visitedPoms.add(expectedPomPath)
+        }
+
+        val expectedPoms = Files.find(
+            expectedRepoPath,
+            Integer.MAX_VALUE,
+            { path: Path, fileAttributes: BasicFileAttributes ->
+                fileAttributes.isRegularFile
+                        && "${path.fileName}".endsWith(".pom", ignoreCase = true)
+            })
+        expectedPoms.forEach {
+            assertTrue(it in visitedPoms, "Missing pom for artifacts in actual $it")
         }
     }
 
