@@ -48,6 +48,10 @@ val libraries by configurations.creating {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
 }
 
+val librariesKlib by configurations.creating {
+    exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+}
+
 val librariesStripVersion by configurations.creating
 
 // Compiler plugins should be copied without `kotlin-` prefix
@@ -168,6 +172,7 @@ dependencies {
     libraries(kotlinStdlib("jdk8"))
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         libraries(kotlinStdlib("js", "distLibrary"))
+        librariesKlib(kotlinStdlib("js", "distLibraryKlib"))
         libraries(project(":kotlin-test:kotlin-test-js", configuration = "distLibrary"))
     }
 
@@ -399,6 +404,7 @@ val distKotlinc = distTask<Sync>("distKotlinc") {
     into("lib") {
         from(jarFiles) { rename { "$compilerBaseName.jar" } }
         from(librariesFiles)
+        from(files(librariesKlib))
         from(librariesStripVersionFiles) {
             rename {
                 it.replace(Regex("-\\d.*\\.jar\$"), ".jar")

@@ -16,6 +16,7 @@ configurations {
     distSources
     distJs
     distLibrary
+    distLibraryKlib
 }
 
 def builtinsSrcDir = "${buildDir}/builtin-sources"
@@ -284,6 +285,14 @@ tasks.register("libraryJarWithIr", Zip) {
     filesMatching("*.*") { it.mode = 0b110100100 } // KTI-401
 }
 
+def libraryJarWithIrKlib = tasks.register("libraryJarWithIrKlib", Zip) {
+    dependsOn("libraryJarWithIr")
+    archiveExtension = "klib"
+    def archiveOperations = services.get(ArchiveOperations)
+    from { libraryJarWithIr.archiveFile.map {archiveOperations.zipTree(it) } }
+    destinationDirectory = file("$buildDir/libs2")
+}
+
 jar.dependsOn(libraryJarWithIr)
 
 tasks.register("sourcesJar", Jar) {
@@ -320,6 +329,7 @@ artifacts {
     sources sourcesJar
     distSources distSourcesJar
     distLibrary libraryJarWithIr
+    distLibraryKlib libraryJarWithIrKlib
 
     compileJs.outputs.files.forEach { artifact ->
         distJs(artifact) { builtBy(compileJs) }
