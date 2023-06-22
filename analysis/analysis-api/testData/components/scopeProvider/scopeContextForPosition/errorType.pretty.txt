@@ -22,6 +22,8 @@ scopes:
       fun hashCode(): kotlin.Int
       fun toString(): kotlin.String
 
+  SyntheticJavaPropertiesScope, index = 3, empty
+
   LocalScope, index = 4, empty
 
   LocalScope, index = 5, empty

@@ -162,14 +162,17 @@ internal class KtFirScopeProvider(
 
     override fun getTypeScope(type: KtType): KtTypeScope? = getFirTypeScope(type)?.let { convertToKtTypeScope(it) }
 
-    override fun getSyntheticJavaPropertiesScope(type: KtType): KtTypeScope? {
+    override fun getSyntheticJavaPropertiesScope(type: KtType): KtTypeScope? =
+        getFirSyntheticPropertiesScope(type)?.let { convertToKtTypeScope(it) }
+
+    private fun getFirSyntheticPropertiesScope(type: KtType): FirSyntheticPropertiesScope? {
         check(type is KtFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
         val firTypeScope = getFirTypeScope(type) ?: return null
         return FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(
             firResolveSession.useSiteFirSession,
             type.coneType,
             firTypeScope
-        )?.let { convertToKtTypeScope(it) }
+        )
     }
 
     override fun getImportingScopeContext(file: KtFile): KtScopeContext {
@@ -208,11 +211,17 @@ internal class KtFirScopeProvider(
             }
         }
 
-        val firScopes = towerDataElementsIndexed.flatMap { (index, towerDataElement) ->
+        val firSyntheticPropertiesScopes = implicitReceivers.mapNotNull { receiver ->
+            getFirSyntheticPropertiesScope(receiver.type)?.let { scope -> IndexedValue(receiver.scopeIndexInTower, scope) }
+        }
+
+        val firAvailableScopes = towerDataElementsIndexed.flatMap { (index, towerDataElement) ->
             val availableScopes = towerDataElement.getAvailableScopes().flatMap { flattenFirScope(it) }
             availableScopes.map { IndexedValue(index, it) }
         }
-        val ktScopesWithKinds = createScopesWithKind(firScopes)
+
+        val firScopesSorted = (firAvailableScopes + firSyntheticPropertiesScopes).sortedBy { it.index }
+        val ktScopesWithKinds = createScopesWithKind(firScopesSorted)
 
         return KtScopeContext(ktScopesWithKinds, implicitReceivers, token)
     }
@@ -245,6 +254,7 @@ internal class KtFirScopeProvider(
 
         is FirLocalScope -> KtScopeKind.LocalScope(indexInTower)
         is FirTypeScope -> KtScopeKind.SimpleTypeScope(indexInTower)
+        is FirSyntheticPropertiesScope -> KtScopeKind.SyntheticJavaPropertiesScope(indexInTower)
         is FirTypeParameterScope -> KtScopeKind.TypeParameterScope(indexInTower)
         is FirPackageMemberScope -> KtScopeKind.PackageMemberScope(indexInTower)
 

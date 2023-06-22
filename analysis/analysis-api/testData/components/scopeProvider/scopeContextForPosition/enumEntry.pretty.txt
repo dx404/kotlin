@@ -27,6 +27,8 @@ scopes:
       fun getDeclaringClass(): java.lang.Class<E?>?
       fun finalize()
 
+  SyntheticJavaPropertiesScope, index = 2, empty
+
   StaticMemberScope, index = 3
     classifiers: 0
     callables: 4
@@ -46,6 +48,8 @@ scopes:
       fun equals(other: kotlin.Any?): kotlin.Boolean
       fun hashCode(): kotlin.Int
       fun toString(): kotlin.String
+
+  SyntheticJavaPropertiesScope, index = 5, empty
 
   ExplicitSimpleImportingScope, index = 6, empty
 

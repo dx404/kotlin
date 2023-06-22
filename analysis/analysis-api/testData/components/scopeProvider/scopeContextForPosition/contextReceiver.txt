@@ -142,6 +142,8 @@ scopes:
         valueParameters: []
         visibility: Public
 
+  SyntheticJavaPropertiesScope, index = 1, empty
+
   LocalScope, index = 2, empty
 
   ExplicitSimpleImportingScope, index = 3, empty

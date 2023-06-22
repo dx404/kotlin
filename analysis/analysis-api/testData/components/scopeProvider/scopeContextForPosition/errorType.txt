@@ -222,6 +222,8 @@ scopes:
         valueParameters: []
         visibility: Public
 
+  SyntheticJavaPropertiesScope, index = 3, empty
+
   LocalScope, index = 4, empty
 
   LocalScope, index = 5, empty

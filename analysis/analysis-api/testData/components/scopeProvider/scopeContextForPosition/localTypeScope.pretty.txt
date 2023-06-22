@@ -20,6 +20,8 @@ scopes:
       fun hashCode(): kotlin.Int
       fun toString(): kotlin.String
 
+  SyntheticJavaPropertiesScope, index = 2, empty
+
   LocalScope, index = 3
     classifiers: 1
       class Y

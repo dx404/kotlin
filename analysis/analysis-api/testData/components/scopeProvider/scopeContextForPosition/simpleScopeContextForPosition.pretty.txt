@@ -18,6 +18,8 @@ scopes:
       fun hashCode(): kotlin.Int
       fun toString(): kotlin.String
 
+  SyntheticJavaPropertiesScope, index = 0, empty
+
   LocalScope, index = 1, empty
 
   LocalScope, index = 2, empty
@@ -29,6 +31,8 @@ scopes:
       fun equals(other: kotlin.Any?): kotlin.Boolean
       fun hashCode(): kotlin.Int
       fun toString(): kotlin.String
+
+  SyntheticJavaPropertiesScope, index = 3, empty
 
   LocalScope, index = 4, empty
 
@@ -67,6 +71,8 @@ scopes:
       fun equals(other: kotlin.Any?): kotlin.Boolean
       fun hashCode(): kotlin.Int
       fun toString(): kotlin.String
+
+  SyntheticJavaPropertiesScope, index = 10, empty
 
   StaticMemberScope, index = 11
     classifiers: 1

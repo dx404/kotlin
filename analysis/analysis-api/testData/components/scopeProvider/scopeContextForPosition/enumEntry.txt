@@ -456,6 +456,8 @@ scopes:
         valueParameters: []
         visibility: ProtectedAndPackage
 
+  SyntheticJavaPropertiesScope, index = 2, empty
+
   StaticMemberScope, index = 3
     classifiers: 0
     callables: 4
@@ -747,6 +749,8 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
+
+  SyntheticJavaPropertiesScope, index = 5, empty
 
   ExplicitSimpleImportingScope, index = 6, empty
 

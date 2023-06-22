@@ -105,11 +105,10 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
         withValidityAssertion { analysisSession.scopeProvider.getSyntheticJavaPropertiesScope(this) }
 
     /**
-     * Scopes in returned [KtScopeContext] don't include synthetic Java properties.
-     * To get such properties use [getSyntheticJavaPropertiesScope].
-     *
      * For each scope in [KtScopeContext] an index is calculated. The indexes are relative to position, and they are only known for
      * scopes obtained with [getScopeContextForPosition].
+     *
+     * Scopes with synthetic Java properties have kind [KtScopeKind.SyntheticJavaPropertiesScope].
      */
     public fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KtScopeContext =
         withValidityAssertion { analysisSession.scopeProvider.getScopeContextForPosition(this, positionInFakeFile) }
