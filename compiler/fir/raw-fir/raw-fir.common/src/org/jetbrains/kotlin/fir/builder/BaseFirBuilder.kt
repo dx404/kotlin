@@ -63,6 +63,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     abstract val T?.selectorExpression: T?
     abstract val T?.arrayExpression: T?
     abstract val T?.indexExpressions: List<T>?
+    abstract val T.isVararg: Boolean
 
     /**** Class name utils ****/
     inline fun <T> withChildClassName(
@@ -901,6 +902,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     createParameterTypeRefWithSourceKind,
                     { src, kind -> src?.toFirSourceElement(kind) },
                     addValueParameterAnnotations,
+                    { it.isVararg },
                 )
             )
         }
@@ -1037,6 +1039,7 @@ fun <T> FirRegularClassBuilder.createDataClassCopyFunction(
     createParameterTypeRefWithSourceKind: (FirProperty, KtFakeSourceElementKind) -> FirTypeRef,
     toFirSource: (T?, KtFakeSourceElementKind) -> KtSourceElement?,
     addValueParameterAnnotations: FirValueParameterBuilder.(T) -> Unit,
+    isVararg: (T) -> Boolean,
 ): FirSimpleFunction {
     fun generateComponentAccess(
         parameterSource: KtSourceElement?,
@@ -1088,7 +1091,7 @@ fun <T> FirRegularClassBuilder.createDataClassCopyFunction(
                 defaultValue = generateComponentAccess(parameterSource, firProperty, classTypeRef, propertyReturnTypeRef)
                 isCrossinline = false
                 isNoinline = false
-                isVararg = false
+                this.isVararg = isVararg(ktParameter)
                 addValueParameterAnnotations(ktParameter)
                 for (annotation in annotations) {
                     annotation.replaceUseSiteTarget(null)

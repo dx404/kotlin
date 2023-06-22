@@ -133,6 +133,9 @@ abstract class BaseConverter(
     override val LighterASTNode?.indexExpressions: List<LighterASTNode>?
         get() = this?.getLastChildExpression()?.getChildrenAsArray()?.filterNotNull()?.filter { it.isExpression() }
 
+    override val LighterASTNode.isVararg: Boolean
+        get() = getChildNodeByType(KtNodeTypes.MODIFIER_LIST)?.getChildNodeByType(VARARG_KEYWORD) != null
+
     fun LighterASTNode.getParent(): LighterASTNode? {
         return tree.getParent(this)
     }
