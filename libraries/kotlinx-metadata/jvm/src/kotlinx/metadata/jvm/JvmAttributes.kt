@@ -42,9 +42,10 @@ var KmClass.hasMethodBodiesInInterface by BooleanFlagDelegate(KmClass::jvmFlags,
 /**
  * Indicates if an interface was compiled with -Xjvm-default=all-compatibility.
  *
- * In compatibility mode we generate method bodies directly in the interface,
- * but we also generate bridges in a nested `DefaultImpls` class for use by
- * clients compiled without all-compatibility.
+ * In compatibility mode Kotlin/JVM compiler generates method bodies directly in the interface,
+ * and also generates bridges in a nested `DefaultImpls` class.
+ * Bridges are intended for use by already existing clients,
+ * such as compiled Java code or Kotlin code compiled without all/all-compatibility setting.
  *
  * Also, can be a result of compiling interface with `@JvmDefaultWithCompatibility` annotation.
  * Check [documentation](https://kotlinlang.org/docs/java-to-kotlin-interop.html#compatibility-modes-for-default-methods) for more details.

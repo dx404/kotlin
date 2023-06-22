@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind as ProtoMemberKind
 // Arbitrary reordering of enum members here will likely break deserialization.
 
 /**
- * Represents visibility level (also known as access level) of a corresponding declaration.
+ * Represents visibility level (also known as access level) of the corresponding declaration.
  * Some of these visibilities may be non-denotable in Kotlin.
  */
 enum class Visibility(kind: Int) {
@@ -75,7 +75,7 @@ enum class Visibility(kind: Int) {
 }
 
 /**
- * Represents modality of a corresponding declaration.
+ * Represents modality of the corresponding declaration.
  *
  * Modality determines when and where it is possible to extend/override a class/member.
  */
@@ -174,7 +174,7 @@ enum class MemberKind(kind: Int) {
      * Signifies that the corresponding function or property exists in the containing class because it has been produced
      * by interface delegation.
      *
-     * Do not confuse with property delegation which is denoted by [KmProperty.isDelegated].
+     * Not to be confused with property delegation which is denoted by [KmProperty.isDelegated].
      */
     DELEGATION(ProtoMemberKind.DELEGATION_VALUE),
 
