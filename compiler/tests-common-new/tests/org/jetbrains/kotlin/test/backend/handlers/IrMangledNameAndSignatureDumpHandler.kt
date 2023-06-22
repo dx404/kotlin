@@ -213,15 +213,19 @@ class IrMangledNameAndSignatureDumpHandler(testServices: TestServices) : Abstrac
                 )
             }
 
+            fun IdSignature.print(name: String) {
+                val commentPrefix = "//   "
+                println(commentPrefix, name, ": ", render())
+                asPublic()?.description?.let {
+                    println(commentPrefix, name, " debug description: ", it)
+                }
+            }
+
             fun printActualMangledNamesAndSignatures() {
                 printMangledNames(computedMangledNames)
 
-                symbol.signature?.let {
-                    println("//   Public signature: ${it.render()}")
-                }
-                symbol.privateSignature?.let {
-                    println("//   Private signature: ${it.render()}")
-                }
+                symbol.signature?.print("Public signature")
+                symbol.privateSignature?.print("Private signature")
             }
 
             var printedActualMangledNameAndSignature = false
