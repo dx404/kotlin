@@ -1,8 +1,7 @@
 /*
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-/*
+ *//*
  * Based on GWT InternalStringMap
  * Copyright 2008 Google Inc.
  */
@@ -17,7 +16,7 @@ internal external interface JsRawArray<E> {
     var length: Int
 }
 
-private inline fun <E> JsRawArray<E>.getElement(index: Int): E {
+internal inline fun <E> JsRawArray<E>.getElement(index: Int): E {
     return (this.asDynamic()[index]).unsafeCast<E>()
 }
 
@@ -51,8 +50,8 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
     }
 
     private var backingMap: dynamic = createJsMap()
-    private var values = createJsArray<V>()
-    private var keys = createJsArray<K>()
+    internal var values = createJsArray<V>()
+    internal var keys = createJsArray<K>()
 
     override val size: Int
         get() = keys.length
@@ -90,8 +89,7 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
     }
 
     override fun containsOtherEntry(entry: Map.Entry<*, *>): Boolean {
-        @Suppress("UNCHECKED_CAST")
-        return containsEntry(entry as Map.Entry<K, V>)
+        @Suppress("UNCHECKED_CAST") return containsEntry(entry as Map.Entry<K, V>)
     }
 
     override fun removeEntry(entry: Map.Entry<K, V>): Boolean {
@@ -144,16 +142,16 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
         return removedValue
     }
 
-    internal fun removeKeyIndex(key: K, index: Int) {
+    internal open fun removeKeyIndex(key: K, removingIndex: Int) {
         jsDeleteProperty(backingMap.unsafeCast<Any>(), key as Any)
 
-        if (index + 1 == size) {
+        if (removingIndex + 1 == size) {
             keys.pop()
             values.pop()
         } else {
-            keys.replaceElementAtWithLast(index)
-            values.replaceElementAtWithLast(index)
-            backingMap[keys.getElement(index)] = index
+            keys.replaceElementAtWithLast(removingIndex)
+            values.replaceElementAtWithLast(removingIndex)
+            backingMap[keys.getElement(removingIndex)] = removingIndex
         }
     }
 
@@ -164,11 +162,11 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
     }
 
     override fun build() {
+        // Feel free to implement later if it is required
         throw UnsupportedOperationException("build method is not implemented")
     }
 
-    override fun checkIsMutable() {
-    }
+    override fun checkIsMutable() {}
 
     override fun keysIterator(): MutableIterator<K> = KeysItr(this)
     override fun valuesIterator(): MutableIterator<V> = ValuesItr(this)
@@ -189,6 +187,7 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
 
         fun remove() {
             map.removeKeyIndex(map.keys.getElement(lastIndex), lastIndex)
+            index = lastIndex
             lastIndex = -1
         }
     }
@@ -215,7 +214,7 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
         }
     }
 
-    private class EntryRef<K, V>(
+    protected class EntryRef<K, V>(
         override val key: K,
         override var value: V,
         private val map: InternalStringMap<K, V>,
@@ -227,10 +226,7 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
             return prevValue
         }
 
-        override fun equals(other: Any?): Boolean =
-            other is Map.Entry<*, *> &&
-                    other.key == key &&
-                    other.value == value
+        override fun equals(other: Any?): Boolean = other is Map.Entry<*, *> && other.key == key && other.value == value
 
         override fun hashCode(): Int = key.hashCode() xor value.hashCode()
 
