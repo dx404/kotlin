@@ -1490,7 +1490,7 @@ open class RawFirBuilder(
                     name = function.nameAsSafeName
                     labelName = context.getLastLabel(function)?.name ?: runIf(!name.isSpecial) { name.identifier }
                     symbol = FirNamedFunctionSymbol(callableIdForName(function.nameAsSafeName)).also { functionSymbol = it }
-                    dispatchReceiverType = currentDispatchReceiverType()
+                    dispatchReceiverType = runIf(!isLocalFunction) { currentDispatchReceiverType() }
                     status = FirDeclarationStatusImpl(
                         if (isLocalFunction) Visibilities.Local else function.visibility,
                         function.modality,

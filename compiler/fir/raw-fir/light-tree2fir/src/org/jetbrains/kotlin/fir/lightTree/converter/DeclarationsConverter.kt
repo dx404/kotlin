@@ -1728,7 +1728,7 @@ class DeclarationsConverter(
                 }
 
                 symbol = functionSymbol
-                dispatchReceiverType = currentDispatchReceiverType()
+                dispatchReceiverType = runIf(!isLocal) { currentDispatchReceiverType() }
                 contextReceivers.addAll(convertContextReceivers(functionDeclaration))
             }
         }
