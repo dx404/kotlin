@@ -19,9 +19,20 @@ open class IdSignatureDescriptor(override val mangler: KotlinMangler.DescriptorM
 
     protected open fun createSignatureBuilder(type: SpecialDeclarationType): DescriptorBasedSignatureBuilder = DescriptorBasedSignatureBuilder(type)
 
+    private fun computeSignatureHashAndDescriptionFor(declaration: DeclarationDescriptor): Pair<Long, String> = mangler.run {
+        declaration.signatureString(compatibleMode = false).let { it.hashMangle to it }
+    }
+
     protected open inner class DescriptorBasedSignatureBuilder(private val type: SpecialDeclarationType) :
         IdSignatureBuilder<DeclarationDescriptor>(),
         DeclarationDescriptorVisitor<Unit, Nothing?> {
+
+        private fun setHashIdFor(declaration: DeclarationDescriptor) {
+            computeSignatureHashAndDescriptionFor(declaration).let {
+                hashId = it.first
+                description = it.second
+            }
+        }
 
         override fun accept(d: DeclarationDescriptor) {
             d.accept(this, null)
@@ -71,7 +82,7 @@ open class IdSignatureDescriptor(override val mangler: KotlinMangler.DescriptorM
 
         override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Nothing?) {
             collectParents(descriptor)
-            hashId = mangler.run { descriptor.signatureMangle(compatibleMode = false) }
+            setHashIdFor(descriptor)
             isTopLevelPrivate = isTopLevelPrivate or descriptor.isTopLevelPrivate
             setDescription(descriptor)
             setExpected(descriptor.isExpect)
@@ -115,7 +126,7 @@ open class IdSignatureDescriptor(override val mangler: KotlinMangler.DescriptorM
 
         override fun visitConstructorDescriptor(constructorDescriptor: ConstructorDescriptor, data: Nothing?) {
             collectParents(constructorDescriptor)
-            hashId = mangler.run { constructorDescriptor.signatureMangle(compatibleMode = false) }
+            setHashIdFor(constructorDescriptor)
             platformSpecificConstructor(constructorDescriptor)
         }
 
@@ -131,8 +142,7 @@ open class IdSignatureDescriptor(override val mangler: KotlinMangler.DescriptorM
             collectParents(actualDeclaration)
             isTopLevelPrivate = isTopLevelPrivate or actualDeclaration.isTopLevelPrivate
 
-
-            hashId = mangler.run { actualDeclaration.signatureMangle(compatibleMode = false) }
+            setHashIdFor(descriptor)
             setExpected(actualDeclaration.isExpect)
             platformSpecificProperty(actualDeclaration)
             if (type == SpecialDeclarationType.BACKING_FIELD) {
@@ -149,7 +159,7 @@ open class IdSignatureDescriptor(override val mangler: KotlinMangler.DescriptorM
 
         override fun visitPropertyGetterDescriptor(descriptor: PropertyGetterDescriptor, data: Nothing?) {
             descriptor.correspondingProperty.accept(this, null)
-            hashIdAcc = mangler.run { descriptor.signatureMangle(compatibleMode = false) }
+            setHashIdFor(descriptor)
             classFqnSegments.add(descriptor.name.asString())
             setExpected(descriptor.isExpect)
             platformSpecificGetter(descriptor)
@@ -157,7 +167,7 @@ open class IdSignatureDescriptor(override val mangler: KotlinMangler.DescriptorM
 
         override fun visitPropertySetterDescriptor(descriptor: PropertySetterDescriptor, data: Nothing?) {
             descriptor.correspondingProperty.accept(this, null)
-            hashIdAcc = mangler.run { descriptor.signatureMangle(compatibleMode = false) }
+            setHashIdFor(descriptor)
             classFqnSegments.add(descriptor.name.asString())
             setExpected(descriptor.isExpect)
             platformSpecificSetter(descriptor)
