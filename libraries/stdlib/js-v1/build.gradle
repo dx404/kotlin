@@ -379,6 +379,8 @@ tasks.register("runMocha", NodeTask) {
     }
 }
 
+ArtifactsKt.addVariantsWithPublishedComponents(project, configurations.distLibraryKlib)
+
 //test.dependsOn runMocha
 
 tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile) {

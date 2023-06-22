@@ -183,6 +183,12 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     return sourcesJar
 }
 
+fun Project.addVariantsWithPublishedComponents(configuration: Configuration) {
+    configurePublishedComponent {
+        addVariantsFromConfiguration(configuration) { }
+    }
+}
+
 /**
  * Also embeds into final '-sources.jar' file source files from embedded dependencies.
  */
