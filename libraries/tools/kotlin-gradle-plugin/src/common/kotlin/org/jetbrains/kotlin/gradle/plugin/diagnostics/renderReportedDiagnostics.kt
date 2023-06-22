@@ -31,7 +31,7 @@ internal fun renderReportedDiagnostic(
 
 private fun ToolingDiagnostic.render(isVerbose: Boolean): String = buildString {
     if (isVerbose) {
-        appendLine(this)
+        appendLine(this@render)
         append(DIAGNOSTIC_SEPARATOR)
     } else {
         append(message)
