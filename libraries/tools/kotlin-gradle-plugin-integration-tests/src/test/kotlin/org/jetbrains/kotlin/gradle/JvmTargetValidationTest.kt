@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.appendText
-import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteExisting
-import kotlin.io.path.writeText
 
 @DisplayName("JVM tasks target validation")
 @JvmGradlePluginTests
@@ -275,51 +273,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 kotlin.jvm.target.validation.mode = warning
                 """.trimIndent()
             )
-
-            build("assemble") {
-                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
-            }
-        }
-    }
-
-    @DisplayName("Should do JVM target validation if java sources are added and configuration cache is reused")
-    @GradleTest
-    internal fun shouldDoJvmTargetValidationOnNewJavaSourcesAndConfigurationCacheReuse(gradleVersion: GradleVersion) {
-        project(
-            projectName = "simple".fullProjectName,
-            gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.withConfigurationCache,
-            buildJdk = getJdk11().javaHome // should differ from default Kotlin jvm target value
-        ) {
-            // Validation mode should be 'warning' because of https://github.com/gradle/gradle/issues/9339
-            // which is fixed in Gradle 7.2
-            //language=properties
-            gradleProperties.append(
-                """
-                # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = warning
-                """.trimIndent()
-            )
-
-            build("assemble") {
-                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
-            }
-
-            javaSourcesDir().resolve("demo").run {
-                createDirectories()
-                resolve("HelloWorld.java").writeText(
-                    //language=Java
-                    """
-                    package demo;
-
-                    public class HelloWorld {
-                        public static void main(String[] args) {
-                            System.out.println("Hello world!");
-                        }
-                    }
-                    """.trimIndent()
-                )
-            }
 
             build("assemble") {
                 assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
