@@ -189,4 +189,30 @@ class FlagDelegatesTest {
         assertTrue(props.getValue("b").hasConstant)
         assertFalse(props.getValue("c").hasConstant)
     }
+
+    interface I {
+        val x: Int
+    }
+
+    class Foo(i: I) : I by i {
+        val props: Map<String, Int> = mapOf()
+
+        val y: Int by props
+    }
+
+    @Test
+    fun testDelegation() {
+        val foo = Foo::class.java.readMetadataAsKmClass()
+        val props = foo.properties.associateBy { it.name }
+        with(props["x"]!!) {
+            assertEquals(MemberKind.DELEGATION, kind)
+            assertFalse(isDelegated)
+            assertFalse(getter.isNotDefault)
+        }
+        with(props["y"]!!) {
+            assertEquals(MemberKind.DECLARATION, kind)
+            assertTrue(isDelegated)
+            assertTrue(getter.isNotDefault)
+        }
+    }
 }

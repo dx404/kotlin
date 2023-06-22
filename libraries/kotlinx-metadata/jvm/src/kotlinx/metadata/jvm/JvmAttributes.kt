@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags as JF
  * Indicates that its backing field is declared as a static
  * field in the interface. In Kotlin code, this usually happens if the property is annotated with [JvmField].
  *
- * Has no effect if the property is not declared in a companion object of some interface.
+ * Returns `false` if the property is not declared in a companion object of some interface.
  */
 var KmProperty.isMovedFromInterfaceCompanion by BooleanFlagDelegate(KmProperty::jvmFlags, booleanFlag(JF.IS_MOVED_FROM_INTERFACE_COMPANION))
 

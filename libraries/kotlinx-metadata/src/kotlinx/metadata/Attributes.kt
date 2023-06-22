@@ -100,14 +100,14 @@ var KmTypeAlias.hasAnnotations by annotationsOn(KmTypeAlias::flags)
 // --- CLASS ---
 
 /**
- * Represents modality of a corresponding class.
+ * Represents modality of the corresponding class.
  *
  * Modality determines when and where it is possible to extend/implement a class/interface.
  */
 var KmClass.modality: Modality by modalityDelegate(KmClass::flags)
 
 /**
- * Represents visibility of a corresponding class.
+ * Represents visibility of the corresponding class.
  *
  * Note that Kotlin metadata has an extended list of visibilities; some of them are non-denotable.
  * For additional details, see [Visibility].
@@ -115,7 +115,7 @@ var KmClass.modality: Modality by modalityDelegate(KmClass::flags)
 var KmClass.visibility: Visibility by visibilityDelegate(KmClass::flags)
 
 /**
- * Represents kind of a corresponding class — whether it is a regular class or an interface, companion object, et cetera.
+ * Represents kind of the corresponding class — whether it is a regular class or an interface, companion object, et cetera.
  */
 var KmClass.kind: ClassKind by EnumFlagDelegate(
     KmClass::flags,
@@ -169,7 +169,7 @@ var KmClass.hasEnumEntries: Boolean by classBooleanFlag(Flag(ProtoFlags.HAS_ENUM
 // --- CONSTRUCTOR ---
 
 /**
- * Represents visibility of a corresponding constructor.
+ * Represents visibility of the corresponding constructor.
  *
  * Note that Kotlin metadata has an extended list of visibilities; some of them are non-denotable.
  * For additional details, see [Visibility].
@@ -192,14 +192,14 @@ var KmConstructor.hasNonStableParameterNames: Boolean by constructorBooleanFlag(
 // --- FUNCTION ---
 
 /**
- * Represents kind of a corresponding function.
+ * Represents kind of the corresponding function.
  *
  * Kind indicates the origin of a declaration within a containing class. For details, see [MemberKind].
  */
 var KmFunction.kind: MemberKind by memberKindDelegate(KmFunction::flags)
 
 /**
- * Represents visibility of a corresponding function.
+ * Represents visibility of the corresponding function.
  *
  * Note that Kotlin metadata has an extended list of visibilities; some of them are non-denotable.
  * For additional details, see [Visibility].
@@ -207,7 +207,7 @@ var KmFunction.kind: MemberKind by memberKindDelegate(KmFunction::flags)
 var KmFunction.visibility: Visibility by visibilityDelegate(KmFunction::flags)
 
 /**
- * Represents modality of a corresponding function.
+ * Represents modality of the corresponding function.
  *
  * Modality determines when and where it is possible or mandatory to override a declaration.
  */
@@ -259,7 +259,7 @@ var KmFunction.hasNonStableParameterNames: Boolean by functionBooleanFlag(Flag(P
 // --- PROPERTY ---
 
 /**
- * Represents visibility of a corresponding property.
+ * Represents visibility of the corresponding property.
  *
  * Note that Kotlin metadata has an extended list of visibilities; some of them are non-denotable.
  * For additional details, see [Visibility].
@@ -267,14 +267,14 @@ var KmFunction.hasNonStableParameterNames: Boolean by functionBooleanFlag(Flag(P
 var KmProperty.visibility: Visibility by visibilityDelegate(KmProperty::flags)
 
 /**
- * Represents modality of a corresponding property.
+ * Represents modality of the corresponding property.
  *
  * Modality determines when and where it is possible or mandatory to override a declaration.
  */
 var KmProperty.modality: Modality by modalityDelegate(KmProperty::flags)
 
 /**
- * Represents kind of a corresponding property.
+ * Represents kind of the corresponding property.
  *
  * Kind indicates the origin of a declaration within a containing class. For details, see [MemberKind].
  */
@@ -310,7 +310,7 @@ var KmProperty.isLateinit: Boolean by propertyBooleanFlag(Flag(ProtoFlags.IS_LAT
  * [KmProperty.hasAnnotations]: constant values of properties are written to the bytecode directly, and this flag can be used to avoid
  * reading the value from the bytecode in case there isn't one.
  *
- * Do not confuse this with [KmProperty.isConst], because `const` modifier is applicable only to properties on top-level and inside objects,
+ * Not to be confused with [KmProperty.isConst], because `const` modifier is applicable only to properties on top-level and inside objects,
  * while property in a regular class can also have constant value.
  * Whether the property has a constant value is ultimately decided by the compiler and its optimizations.
  * Generally, a property initializer that can be computed in compile time is likely to have a constant value written to the bytecode.
@@ -336,7 +336,7 @@ var KmProperty.isExternal: Boolean by propertyBooleanFlag(Flag(ProtoFlags.IS_EXT
 /**
  * Indicates that the corresponding property is a delegated property.
  *
- * Do not confuse with interface delegation.
+ * Not to be confused with interface delegation.
  * If a property was produced by interface delegation, it would have the corresponding [KmProperty.kind].
  */
 var KmProperty.isDelegated: Boolean by propertyBooleanFlag(Flag(ProtoFlags.IS_DELEGATED))
@@ -349,7 +349,7 @@ var KmProperty.isExpect: Boolean by propertyBooleanFlag(Flag(ProtoFlags.IS_EXPEC
 // --- PROPERTY ACCESSOR ---
 
 /**
- * Represents visibility of a corresponding property accessor.
+ * Represents visibility of the corresponding property accessor.
  *
  * Note that Kotlin metadata has an extended list of visibilities; some of them are non-denotable.
  * For additional details, see [Visibility].
@@ -357,7 +357,7 @@ var KmProperty.isExpect: Boolean by propertyBooleanFlag(Flag(ProtoFlags.IS_EXPEC
 var KmPropertyAccessorAttributes.visibility: Visibility by visibilityDelegate(KmPropertyAccessorAttributes::flags)
 
 /**
- * Represents modality of a corresponding property accessor.
+ * Represents modality of the corresponding property accessor.
  *
  * Modality determines when and where it is possible or mandatory to override a declaration.
  */
@@ -411,7 +411,7 @@ var KmTypeParameter.isReified: Boolean by BooleanFlagDelegate(KmTypeParameter::f
 // --- TYPE ALIAS ---
 
 /**
- * Represents visibility of a corresponding type alias.
+ * Represents visibility of the corresponding type alias.
  *
  * Note that Kotlin metadata has an extended list of visibilities; some of them are non-denotable.
  * For additional details, see [Visibility].

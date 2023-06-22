@@ -108,11 +108,11 @@ enum class Modality(kind: Int) {
 }
 
 /**
- * Represents the kind of the corresponding class, i.e. the way it is declared in the source code.
+ * Represents the kind of the corresponding class, i.e., the way it is declared in the source code.
  */
 enum class ClassKind(kind: Int) {
     /**
-     * Signifies that the corresponding class is a usual `class`.
+     * Signifies that the corresponding class is a usual or anonymous class.
      */
     CLASS(ProtoClassKind.CLASS_VALUE),
 
@@ -137,7 +137,7 @@ enum class ClassKind(kind: Int) {
     ANNOTATION_CLASS(ProtoClassKind.ANNOTATION_CLASS_VALUE),
 
     /**
-     * Signifies that the corresponding class is a non-companion `object`.
+     * Signifies that the corresponding class is a non-companion, singleton `object`.
      */
     OBJECT(ProtoClassKind.OBJECT_VALUE),
 
