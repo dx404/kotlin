@@ -40,6 +40,12 @@ void gc::mark::MarkPacer::wait(gc::mark::MarkPacer::Phase phase) {
     cond_.wait(lock, [=]() { return phase_ >= phase; });
 }
 
+void gc::mark::MarkPacer::waitFast(gc::mark::MarkPacer::Phase phase) {
+    while (phase_.load(std::memory_order_relaxed) < phase) {
+        std::this_thread::yield();
+    }
+}
+
 void gc::mark::MarkPacer::beginEpoch(uint64_t epoch) {
     epoch_ = epoch;
     begin(Phase::kReady);

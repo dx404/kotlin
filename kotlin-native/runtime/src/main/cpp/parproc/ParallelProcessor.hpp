@@ -34,7 +34,7 @@ template <std::size_t kMaxWorkers, typename ListImpl, std::size_t kMinSizeToShar
 class ParallelProcessor : private Pinned {
 
     // TODO move inside Batch
-    static const std::size_t kBatchCapacity = 512; // TODO choose
+    static const std::size_t kBatchCapacity = 256; // TODO choose
 
     class Batch {
     public:
@@ -85,29 +85,42 @@ public:
         }
 
         ALWAYS_INLINE bool tryPushLocal(typename ListImpl::reference value) noexcept {
-            TODO("local ops");
+            // TODO do better
+            return batch_.elems_.try_push_front(value);
         }
 
         ALWAYS_INLINE bool tryPush(typename ListImpl::reference value) noexcept {
             if (batch_.full()) {
-                dispatcher_.releaseBatch(std::move(batch_));
+                bool released = dispatcher_.releaseBatch(std::move(batch_));
+                if (!released) {
+                    overflowList_.splice_after(overflowList_.before_begin(), batch_.elems_.before_begin(), batch_.elems_.end(), kBatchCapacity);
+                    RuntimeAssert(batch_.empty(), "must become empty");
+                }
                 batch_ = Batch{};
             }
             return batch_.tryPush(value);
         }
 
         ALWAYS_INLINE typename ListImpl::pointer tryPopLocal() noexcept {
-            TODO("local ops");
+            // TODO do better
+            return batch_.elems_.try_pop_front();
         }
 
         ALWAYS_INLINE typename ListImpl::pointer tryPop() noexcept {
             if (batch_.empty()) {
+                // FIXME simplify CFG
                 while (true) {
                     bool acquired = dispatcher_.acquireBatch(batch_);
                     if (!acquired) {
-                        bool newWorkAvailable = waitForMoreWork();
-                        if (newWorkAvailable) continue;
-                        return nullptr;
+                        if (!overflowList_.empty()) {
+                            auto spliced = batch_.elems_.splice_after(batch_.elems_.before_begin(), overflowList_.before_begin(), overflowList_.end(), kBatchCapacity);
+                            // TODO check size
+                            batch_.size_ = spliced;
+                        } else {
+                            bool newWorkAvailable = waitForMoreWork();
+                            if (newWorkAvailable) continue;
+                            return nullptr;
+                        }
                     }
                     RuntimeAssert(!batch_.empty(), "Must acquire smth");
                     break;
@@ -155,6 +168,7 @@ public:
         ParallelProcessor& dispatcher_;
 
         Batch batch_;
+        ListImpl overflowList_;
     };
 
     ParallelProcessor() = default;
@@ -200,37 +214,40 @@ private:
     mutable std::mutex waitMutex_;
     mutable std::condition_variable waitCV_;
 
-    void releaseBatch(Batch&& batch) {
+    bool releaseBatch(Batch&& batch) {
         RuntimeAssert(!batch.empty(), "must not be empty"); // TODO assert msgs
         auto size = batch.size_; // TODO remove?
         bool enqueued = batches_.enqueue(std::move(batch)); // TODO forward?
         if (!enqueued) {
-            std::unique_lock guard(overflowMutex_);
-            overflowSet_.splice_after(overflowSet_.before_begin(), batch.elems_.before_begin(), batch.elems_.end(), std::numeric_limits<std::size_t>::max()); // FIXME max?
+            return false;
+//            std::unique_lock guard(overflowMutex_);
+//            overflowSet_.splice_after(overflowSet_.before_begin(), batch.elems_.before_begin(), batch.elems_.end(), std::numeric_limits<std::size_t>::max()); // FIXME max?
         }
         onShare(size);
+        return true;
     }
 
     bool acquireBatch(Batch& dst) {
         RuntimeAssert(dst.empty(), "must be empty");
         bool dequeued = batches_.dequeue(dst);
-        if (dequeued) return true;
+        return dequeued;
 
-        RuntimeAssert(dst.empty(), "must be empty");
-        // TODO if overflow is empty?
-        std::unique_lock guard(overflowMutex_);
-        std::size_t spliced = dst.elems_.splice_after(dst.elems_.before_begin(),
-                                                      overflowSet_.before_begin(),
-                                                      overflowSet_.end(),
-                                                      kBatchCapacity);
-        dst.size_ = spliced;
-        return spliced > 0;
+//        if (dequeued) return true;
+//        RuntimeAssert(dst.empty(), "must be empty");
+//        // TODO if overflow is empty?
+//        std::unique_lock guard(overflowMutex_);
+//        std::size_t spliced = dst.elems_.splice_after(dst.elems_.before_begin(),
+//                                                      overflowSet_.before_begin(),
+//                                                      overflowSet_.end(),
+//                                                      kBatchCapacity);
+//        dst.size_ = spliced;
+//        return spliced > 0;
     }
 
-    mpmc_bounded_queue<Batch, 1024 * 8> batches_;
+    mpmc_bounded_queue<Batch, 1024 * 4> batches_; // TODO choose
 
-    std::mutex overflowMutex_;
-    ListImpl overflowSet_;
+//    std::mutex overflowMutex_;
+//    ListImpl overflowSet_;
 };
 
 }

@@ -47,6 +47,7 @@ public:
     bool is(Phase phase) const;
     void begin(Phase phase);
     void wait(Phase phase);
+    void waitFast(Phase phase);
 
     void beginEpoch(uint64_t epoch);
     void waitNewEpochReadyOrShutdown() const;
