@@ -65,7 +65,7 @@ void gc::mark::MarkPacer::waitEpochFinished(uint64_t currentEpoch) const {
 }
 
 bool gc::mark::MarkPacer::acceptingNewWorkers() const {
-    return Phase::kReady <= phase_ && phase_ < Phase::kParallelMark;
+    return Phase::kReady <= phase_ && phase_ <= Phase::kParallelMark;
 }
 
 
@@ -84,7 +84,6 @@ void gc::mark::ParallelMark::beginMarkingEpoch(gc::GCHandle gcHandle) {
 
     // main worker is always accounted, so others would not be able to exhaust all the parallelism before main is instantiated
     activeWorkersCount_ = 1;
-    auxWorkersCount_ = 0;
 
     parallelProcessor_.construct();
 
@@ -123,17 +122,20 @@ void gc::mark::ParallelMark::runMainInSTW() {
         });
         // global root set must be collected after all the mutator's global data have been published
         collectRootSetGlobals<MarkTraits>(gcHandle(), mainWorker);
-        spinWait([this] {
-            return auxWorkersCount_.load(std::memory_order_relaxed) == auxWorkersPoolSize_
-                    || activeWorkersCount_.load(std::memory_order_relaxed) == maxParallelism_;
-        });
 
-        std::unique_lock guard(workerCreationMutex_);
-        GCLogInfo(gcHandle().getEpoch(), "Exactly %zu workers participate in mark (%s)", activeWorkersCount_.load(std::memory_order_relaxed),
-                  mutatorsCooperate_ ? "including cooperative mutators" : "mutators cooperation was not requested"
-        );
+        // TODO
+//        GCLogInfo(gcHandle().getEpoch(), "Exactly %zu workers participate in mark (%s)", activeWorkersCount_.load(std::memory_order_relaxed),
+//                  mutatorsCooperate_ ? "including cooperative mutators" : "mutators cooperation was not requested"
+//        );
         pacer_.begin(MarkPacer::Phase::kParallelMark);
-        parallelMark(mainWorker);
+        // FIXME copy&pasted
+        GCLogDebug(gcHandle().getEpoch(), "Mark loop has begun");
+        Mark<MarkTraits>(gcHandle(), mainWorker);
+        pacer_.begin(MarkPacer::Phase::kIdle);
+        // We must now wait for every worker to finish the Mark procedure:
+        // wake up from possible waiting, publish statistics, etc.
+        // Only then it's safe to destroy the parallelProcessor and proceed to other GC tasks such as sweep.
+        waitEveryWorkerTermination();
     }
 }
 
@@ -162,7 +164,6 @@ void gc::mark::ParallelMark::runAuxiliary() {
     auto curEpoch = gcHandle().getEpoch();
     auto parallelWorker = createWorker();
     if (parallelWorker) {
-        auxWorkersCount_.fetch_add(1, std::memory_order_relaxed);
         completeRootSetAndMark(*parallelWorker);
     }
 
@@ -187,10 +188,9 @@ void gc::mark::ParallelMark::setParallelismLevel(size_t maxParallelism, bool mut
     RuntimeCheck(maxParallelism > 0, "Parallelism level can't be 0");
     maxParallelism_ = std::min(maxParallelism, kMaxWorkers);
     mutatorsCooperate_ = mutatorsCooperate;
-    auxWorkersPoolSize_ = auxWorkersPoolSize;
     RuntimeLogInfo({kTagGC},
-                   "Set up parallel mark with maxParallelism = %zu, auxWorkersPoolSize = %zu and %s" "cooperative mutators",
-                   maxParallelism_, auxWorkersPoolSize_, (mutatorsCooperate_ ? "" : "non-"));
+                   "Set up parallel mark with maxParallelism = %zu and %s" "cooperative mutators",
+                   maxParallelism_, (mutatorsCooperate_ ? "" : "non-"));
 }
 
 void gc::mark::ParallelMark::completeRootSetAndMark(ParallelProcessor::Worker& parallelWorker) {
@@ -227,11 +227,22 @@ void gc::mark::ParallelMark::parallelMark(ParallelProcessor::Worker& worker) {
 }
 
 std::optional<gc::mark::ParallelMark::ParallelProcessor::Worker> gc::mark::ParallelMark::createWorker() {
-    std::unique_lock guard(workerCreationMutex_);
-    if (!pacer_.acceptingNewWorkers() || activeWorkersCount_.load(std::memory_order_relaxed) >= maxParallelism_) return std::nullopt;
+    // TODO std::unique_lock guard(workerCreationMutex_);
+    // FIXME atomize
+
+    if (!pacer_.acceptingNewWorkers()) return std::nullopt;
+
+    // FIXME name
+    auto prev = activeWorkersCount_.fetch_add(1, std::memory_order_relaxed);
+    if (prev == 0) {
+        TODO("FIXME!!!");
+    }
+    if (prev >= maxParallelism_) {
+        activeWorkersCount_.fetch_sub(1, std::memory_order_relaxed);
+        return std::nullopt;
+    }
 
     GCLogDebug(gcHandle().getEpoch(), "Creating %zu'th mark worker", activeWorkersCount_.load(std::memory_order_relaxed));
-    activeWorkersCount_.store(activeWorkersCount_.load(std::memory_order_relaxed) + 1, std::memory_order_relaxed);
     return std::make_optional<ParallelProcessor::Worker>(*parallelProcessor_);
 }
 

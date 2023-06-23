@@ -137,14 +137,15 @@ public:
 
             auto nowWaiting = dispatcher_.waitingWorkers_.fetch_add(1, std::memory_order_relaxed) + 1;
             RuntimeLogDebug({ "balancing" }, "Worker goes to sleep (now sleeping %zu of %zu)",
-                            nowWaiting, dispatcher_.registeredWorkers_.size());
+                            nowWaiting, dispatcher_.registeredWorkers_.load(std::memory_order_relaxed));
 
             if (dispatcher_.allDone_) {
                 dispatcher_.waitingWorkers_.fetch_sub(1, std::memory_order_relaxed);
                 return false;
             }
 
-            if (nowWaiting == dispatcher_.registeredWorkers_.size()) {
+            // FIXME ordering?
+            if (nowWaiting == dispatcher_.registeredWorkers_.load(std::memory_order_relaxed)) {
                 // we are the last ones awake
                 RuntimeLogDebug({ "balancing" }, "Worker has detected termination");
                 dispatcher_.allDone_ = true;
@@ -178,25 +179,16 @@ public:
     }
 
     size_t registeredWorkers() {
-        return registeredWorkers_.size(std::memory_order_relaxed);
+        return registeredWorkers_.load(std::memory_order_relaxed);
     }
 
 private:
     void registerWorker(Worker& worker) {
         RuntimeAssert(worker.empty(), "Work list of an unregistered worker must be empty (e.g. fully depleted earlier)");
-        RuntimeAssert(!allDone_, "Dispatcher must wait for every possible worker to register before finishing the work");
-        RuntimeAssert(!isRegistered(worker), "Task registration is not idempotent");
+        // TODO RuntimeAssert(!allDone_, "Dispatcher must wait for every possible worker to register before finishing the work");
 
-        registeredWorkers_.push(&worker);
+        registeredWorkers_.fetch_add(1, std::memory_order_relaxed);
         RuntimeLogDebug({ "balancing" }, "Worker registered");
-    }
-
-    // Primarily to be used in assertions
-    bool isRegistered(const Worker& worker) const {
-        for (size_t i = 0; i < registeredWorkers_.size(std::memory_order_acquire); ++i) {
-            if (registeredWorkers_[i] == &worker) return true;
-        }
-        return false;
     }
 
     void onShare(std::size_t sharedAmount) {
@@ -207,7 +199,7 @@ private:
         }
     }
 
-    PushOnlyAtomicArray<Worker*, kMaxWorkers, nullptr> registeredWorkers_;
+    std::atomic<size_t> registeredWorkers_ = 0;
     std::atomic<size_t> waitingWorkers_ = 0;
 
     std::atomic<bool> allDone_ = false;

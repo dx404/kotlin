@@ -170,16 +170,19 @@ private:
     std::size_t maxParallelism_ = 1;
     bool mutatorsCooperate_ = false;
 
-    // additional sync step to give auxiliary workers a chance to participate mark
-    std::size_t auxWorkersPoolSize_ = 0;
-    std::atomic<std::size_t> auxWorkersCount_ = 0;
-
     GCHandle gcHandle_ = GCHandle::invalid();
     MarkPacer pacer_;
     std::optional<mm::ThreadRegistry::Iterable> lockedMutatorsList_;
     ManuallyScoped<ParallelProcessor> parallelProcessor_;
-    std::mutex workerCreationMutex_;
+    //std::mutex workerCreationMutex_;
     std::atomic<std::size_t> activeWorkersCount_ = 0;
+
+
+    class WorkersCount {
+    public:
+    private:
+        std::atomic<int>
+    };
 };
 
 } // namespace kotlin::gc::mark
