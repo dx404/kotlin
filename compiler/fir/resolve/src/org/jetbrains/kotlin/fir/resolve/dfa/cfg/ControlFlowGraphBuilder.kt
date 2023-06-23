@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.getOrPutNullable
+import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 
 @OptIn(CfgInternals::class)
 class ControlFlowGraphBuilder {
@@ -369,21 +370,15 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Classes -----------------------------------
 
-    private val FirControlFlowGraphOwner.memberShouldHaveGraph: Boolean
-        get() = when (this) {
-            is FirProperty -> initializer != null || delegate != null || hasExplicitBackingField
-            is FirField -> initializer != null
-            else -> true
-        }
-
     private fun FirClass.firstInPlaceInitializedMember(): FirDeclaration? =
-        declarations.find { it is FirControlFlowGraphOwner && it !is FirFunction && it !is FirClass && it.memberShouldHaveGraph }
+        declarations.find { it is FirControlFlowGraphOwner && it !is FirConstructor && it.isUsedInCfgBuilder }
 
     private inline fun FirClass.forEachGraphOwner(block: (FirControlFlowGraphOwner) -> Unit) {
         for (member in declarations) {
             if (member is FirControlFlowGraphOwner && member.memberShouldHaveGraph) {
                 block(member)
             }
+
             if (member is FirProperty) {
                 member.getter?.let { block(it) }
                 member.setter?.let { block(it) }
@@ -465,7 +460,14 @@ class ControlFlowGraphBuilder {
             val graph = it.controlFlowGraphReference?.controlFlowGraph ?: return@forEachGraphOwner
             when (it) {
                 is FirConstructor -> constructors[it] = graph
-                is FirFunction, is FirClass -> calledLater.add(graph)
+                is FirPropertyAccessor -> if (!it.propertySymbol.fir.isNonLocal) {
+                    calledLater.add(graph)
+                }
+
+                is FirFunction, is FirClass -> if (it is FirDeclaration && !it.isNonLocal) {
+                    calledLater.add(graph)
+                }
+
                 else -> calledInPlace.add(graph)
             }
         }
@@ -1354,3 +1356,18 @@ class ControlFlowGraphBuilder {
 }
 
 fun FirDeclaration?.isLocalClassOrAnonymousObject() = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject
+
+private val FirControlFlowGraphOwner.memberShouldHaveGraph: Boolean
+    get() = when (this) {
+        is FirProperty -> initializer != null || delegate != null || hasExplicitBackingField
+        is FirField -> initializer != null
+        else -> true
+    }
+
+val FirControlFlowGraphOwner.isUsedInCfgBuilder: Boolean
+    get() = when (this) {
+        is FirProperty, is FirField -> memberShouldHaveGraph
+        is FirConstructor, is FirAnonymousInitializer -> true
+        is FirFunction, is FirClass -> false
+        else -> true
+    }

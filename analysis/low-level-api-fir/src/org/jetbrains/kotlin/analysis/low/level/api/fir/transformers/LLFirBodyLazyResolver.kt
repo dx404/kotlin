@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInCfgBuilder
 
 
 internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
@@ -91,7 +92,7 @@ private class LLFirBodyTargetResolver(
                 if (target.resolvePhase >= resolverPhase) return true
 
                 // resolve class CFG graph here, to do this we need to have property & init blocks resoled
-                resolveMemberProperties(target)
+                resolveMembersForCfg(target)
                 performCustomResolveUnderLock(target) {
                     calculateCFG(target)
                 }
@@ -121,15 +122,12 @@ private class LLFirBodyTargetResolver(
         target.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
     }
 
-    private fun resolveMemberProperties(target: FirRegularClass) {
+    private fun resolveMembersForCfg(target: FirRegularClass) {
         withRegularClass(target) {
             transformer.firTowerDataContextCollector?.addDeclarationContext(target, transformer.context.towerDataContext)
 
             for (member in target.declarations) {
-                if (member is FirCallableDeclaration || member is FirAnonymousInitializer) {
-                    /* TODO we should resolve only properties and init blocks here but due to the recent changes in the compiler, we also have to do this for all callable members
-                    we should avoid doing it as it leads to additional work and also can might to problems with incremental analysis
-                    */
+                if (member is FirControlFlowGraphOwner && member.isUsedInCfgBuilder) {
                     member.lazyResolveToPhase(resolverPhase.previous)
                     performResolve(member)
                 }
