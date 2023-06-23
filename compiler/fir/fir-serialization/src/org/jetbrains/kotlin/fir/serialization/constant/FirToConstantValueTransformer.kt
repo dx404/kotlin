@@ -163,21 +163,21 @@ internal abstract class FirToConstantValueTransformer(
 
             symbol.callableId.packageName.asString() == "kotlin" -> {
                 val dispatchReceiver = qualifiedAccessExpression.dispatchReceiver
-                val dispatchReceiverValue by lazy { dispatchReceiver.toConstantValue(data) }
+                val dispatchReceiverValue = dispatchReceiver.toConstantValue(data) ?: return null
                 when (symbol.callableId.callableName.asString()) {
-                    "toByte" -> ByteValue((dispatchReceiverValue!!.value as Number).toByte())
-                    "toLong" -> LongValue((dispatchReceiverValue!!.value as Number).toLong())
-                    "toShort" -> ShortValue((dispatchReceiverValue!!.value as Number).toShort())
-                    "toFloat" -> FloatValue((dispatchReceiverValue!!.value as Number).toFloat())
-                    "toDouble" -> DoubleValue((dispatchReceiverValue!!.value as Number).toDouble())
-                    "toChar" -> CharValue((dispatchReceiverValue!!.value as Number).toInt().toChar())
+                    "toByte" -> ByteValue((dispatchReceiverValue.value as Number).toByte())
+                    "toLong" -> LongValue((dispatchReceiverValue.value as Number).toLong())
+                    "toShort" -> ShortValue((dispatchReceiverValue.value as Number).toShort())
+                    "toFloat" -> FloatValue((dispatchReceiverValue.value as Number).toFloat())
+                    "toDouble" -> DoubleValue((dispatchReceiverValue.value as Number).toDouble())
+                    "toChar" -> CharValue((dispatchReceiverValue.value as Number).toInt().toChar())
                     "unaryMinus" -> {
-                        when (val receiverValue = dispatchReceiverValue) {
-                            is ByteValue -> ByteValue((-receiverValue.value).toByte())
-                            is LongValue -> LongValue(-receiverValue.value)
-                            is ShortValue -> ShortValue((-receiverValue.value).toShort())
-                            is FloatValue -> FloatValue(-receiverValue.value)
-                            is DoubleValue -> DoubleValue(-receiverValue.value)
+                        when (dispatchReceiverValue) {
+                            is ByteValue -> ByteValue((-dispatchReceiverValue.value).toByte())
+                            is LongValue -> LongValue(-dispatchReceiverValue.value)
+                            is ShortValue -> ShortValue((-dispatchReceiverValue.value).toShort())
+                            is FloatValue -> FloatValue(-dispatchReceiverValue.value)
+                            is DoubleValue -> DoubleValue(-dispatchReceiverValue.value)
                             else -> null
                         }
                     }
