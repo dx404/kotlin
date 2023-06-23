@@ -559,7 +559,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                             maven { url 'https://plugins.gradle.org/m2/' }
                         }
                         dependencies {
-                            classpath 'com.github.johnrengelman:shadow:${TestVersions.SHADOW_PLUGIN.SHADOW_8_1}'
+                            classpath 'com.github.johnrengelman:shadow:${TestVersions.ThirdPartyDependencies.SHADOW_PLUGIN}'
                         }
                     }
                     

@@ -77,7 +77,7 @@ interface TestVersions {
         const val V222_0_21 = "222.4550-0.21"
     }
 
-    object SHADOW_PLUGIN {
-        const val SHADOW_8_1 = "8.1.1"
+    object ThirdPartyDependencies {
+        const val SHADOW_PLUGIN = "8.1.1"
     }
 }
