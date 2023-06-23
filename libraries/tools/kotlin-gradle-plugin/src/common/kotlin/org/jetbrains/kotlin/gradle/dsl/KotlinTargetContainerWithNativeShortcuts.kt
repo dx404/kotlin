@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 
-private const val SHORTCUTS_DEPRECATION_MESSAGE = "Use applyDefaultHierarchyTemplate() instead"
+private const val SHORTCUTS_DEPRECATION_MESSAGE = "Use applyDefaultHierarchyTemplate() instead. " +
+        "Deprecated since 1.9.20, scheduled for removal in 2.0"
 
 @KotlinGradlePluginDsl
 @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
