@@ -83,7 +83,7 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
      *
      *     iosX64()
      *     iosArm64()
-     *     iosSimulatorArm64()
+     *     iosSimulatorArm64() // <- Note: This target was previously not registered by the ios() shortcut!
      *
      *     /* ... more targets! */
      * }
@@ -121,7 +121,7 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
      *
      *     tvosArm64()
      *     tvosX64()
-     *     tvosSimulatorArm64()
+     *     tvosSimulatorArm64() // <- Note: This target was previously not registered by the tvos() shortcut!
      *
      *     /* ... more targets! */
      * }
@@ -172,7 +172,7 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
      *
      *     watchosArm64()
      *     watchosX64()
-     *     watchosSimulatorArm64()
+     *     watchosSimulatorArm64() // <- Note: This target was previously not registered by the watchos() shortcut!
      *
      *     /* ... more targets! */
      * }
