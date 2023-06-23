@@ -60,6 +60,7 @@ object IrActualizer {
         //   6. Actualize expect calls in dependent fragments using info obtained in the previous steps
         val actualizerVisitor = ActualizerVisitor(symbolRemapper, typeRemapper)
         dependentFragments.forEach { it.transform(actualizerVisitor, null) }
+        mainFragment.transform(actualizerVisitor, null)
 
         //   7. Merge dependent fragments into the main one
         mergeIrFragments(mainFragment, dependentFragments)

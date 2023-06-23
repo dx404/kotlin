@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
@@ -77,6 +78,10 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbo
 
 internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper, typeRemapper: TypeRemapper) :
     DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper, SymbolRenamer.DEFAULT) {
+    override fun visitCall(expression: IrCall): IrCall {
+        return super.visitCall(expression)
+    }
+
     override fun visitModuleFragment(declaration: IrModuleFragment) =
         declaration.also { it.transformChildren(this, null) }
 

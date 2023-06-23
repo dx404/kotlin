@@ -28208,6 +28208,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/multiplatform/callToJavaSuper.kt");
         }
 
+        @TestMetadata("kt59613.kt")
+        public void ignoreKt59613() throws Exception {
+            runTest("compiler/testData/codegen/box/multiplatform/kt59613.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
         }
