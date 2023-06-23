@@ -1,0 +1,14 @@
+FILE: primaryParameterWithoutReturnType.kt
+    public final data class A : R|kotlin/Any| {
+        public constructor(x: <ERROR TYPE REF: No type for parameter>): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: <ERROR TYPE REF: No type for parameter> = R|<local>/x|
+            public get(): <ERROR TYPE REF: No type for parameter>
+
+        public final operator fun component1(): <ERROR TYPE REF: No type for parameter>
+
+        public final fun copy(x: <ERROR TYPE REF: No type for parameter> = this@R|/A|.R|/A.x|): R|A|
+
+    }

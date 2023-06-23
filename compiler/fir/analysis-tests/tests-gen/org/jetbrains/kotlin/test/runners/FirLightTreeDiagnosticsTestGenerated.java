@@ -3866,6 +3866,18 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
             }
 
             @Test
+            @TestMetadata("primaryParameterWithoutNameAndReturnType.kt")
+            public void testPrimaryParameterWithoutNameAndReturnType() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/primaryParameterWithoutNameAndReturnType.kt");
+            }
+
+            @Test
+            @TestMetadata("primaryParameterWithoutReturnType.kt")
+            public void testPrimaryParameterWithoutReturnType() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/primaryParameterWithoutReturnType.kt");
+            }
+
+            @Test
             @TestMetadata("questionableSmartCast.kt")
             public void testQuestionableSmartCast() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/problems/questionableSmartCast.kt");
