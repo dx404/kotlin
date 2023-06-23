@@ -33,8 +33,8 @@ class ArtifactsTest {
             })
         actualPoms.forEach { actual ->
             val expectedPomPath = actual.toExpectedPath()
-            val actualString = actual.toFile().readText()
-            assertEqualsToFile(expectedPomPath, actualString) { it.replace("ArtifactsTest.version", kotlinVersion) }
+            val actualString = actual.toFile().readText().replace(kotlinVersion, "ArtifactsTest.version")
+            assertEqualsToFile(expectedPomPath, actualString)
             visitedPoms.add(expectedPomPath)
         }
 
