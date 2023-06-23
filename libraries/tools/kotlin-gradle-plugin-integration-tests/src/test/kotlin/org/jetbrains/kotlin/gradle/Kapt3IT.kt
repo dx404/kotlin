@@ -894,6 +894,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("KT-31127: processor using Filer api does not break 'javaCompile' task")
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_74)
     @GradleTest
     fun testKotlinProcessorUsingFiler(gradleVersion: GradleVersion) {
         project("kotlinProject", gradleVersion) {
