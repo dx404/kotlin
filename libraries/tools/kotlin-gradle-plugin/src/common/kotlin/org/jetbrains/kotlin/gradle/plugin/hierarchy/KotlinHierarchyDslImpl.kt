@@ -40,7 +40,7 @@ internal class KotlinHierarchyDslImpl(
 
     private fun applyHierarchyTemplateToAllCompilations(template: KotlinHierarchyTemplate) {
         targets.matching { target -> target.platformType != KotlinPlatformType.common }.all { target ->
-            target.compilations.all forCompilation@{ compilation ->
+            target.compilations.all { compilation ->
                 target.project.kotlinPluginLifecycle.launch {
                     withRestrictedStages(KotlinPluginLifecycle.Stage.upTo(FinaliseRefinesEdges)) {
                         val hierarchy = template.buildHierarchy(compilation) ?: return@withRestrictedStages
