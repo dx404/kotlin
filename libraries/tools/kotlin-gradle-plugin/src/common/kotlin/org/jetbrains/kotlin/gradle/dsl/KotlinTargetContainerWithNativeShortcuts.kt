@@ -194,7 +194,7 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
      *     watchosArm64()
      *     watchosX64()
      *     watchosSimulatorArm64() // <- Note: This target was previously not registered by the watchos() shortcut!
-     *     watchosArm32() //<- Note: This target was previously applied, but
+     *     watchosArm32() //<- Note: This target was previously applied, but is likely not needed anymore
      *
      *
      *     /* ... more targets! */
