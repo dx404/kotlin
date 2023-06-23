@@ -60,7 +60,7 @@ private fun getBigIntHashCode(value: dynamic): Int {
     @Suppress("UNUSED_VARIABLE")
     val shiftNumber = js("BigInt(32)");
     @Suppress("UNUSED_VARIABLE")
-    val LONG_MASK = js("BigInt(0xffffffff)");
+    val MASK = js("BigInt(0xffffffff)");
 
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     var bigNumber = if (value < 0) -value else value
@@ -68,8 +68,8 @@ private fun getBigIntHashCode(value: dynamic): Int {
     val signum = if (value < 0) -1 else 1
 
     while (bigNumber != 0) {
-        val chunk = js("Number(bigNumber & LONG_MASK)").unsafeCast<Int>()
-        hashCode = (31 * hashCode + chunk) or 0
+        val chunk = js("Number(bigNumber & MASK)").unsafeCast<Int>()
+        hashCode = 31 * hashCode + chunk
         @Suppress("UNUSED_VALUE")
         bigNumber = js("bigNumber >> shiftNumber")
     }

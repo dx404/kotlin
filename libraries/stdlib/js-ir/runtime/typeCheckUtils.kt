@@ -138,14 +138,12 @@ internal fun isInterface(obj: dynamic, iface: dynamic): Boolean {
 }
 
 internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
-    val objTypeOf = jsTypeOf(obj)
-
-    if (objTypeOf == "function") {
+    if (jsTypeOf(obj) == "function") {
         @Suppress("DEPRECATED_IDENTITY_EQUALS")
         return obj.`$arity`.unsafeCast<Int>() === arity
     }
 
-    if (objTypeOf == "object" && jsIn("${'$'}metadata${'$'}", obj.constructor)) {
+    if (jsTypeOf(obj) == "object" && jsIn("${'$'}metadata${'$'}", obj.constructor)) {
         @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
         return obj.constructor.unsafeCast<Ctor>().`$metadata$`.suspendArity?.let {
             var result = false
