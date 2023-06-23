@@ -38,7 +38,7 @@ class DefaultHierarchySetupDiagnosticTest {
         val kotlin = multiplatformExtension
         kotlin.linuxX64("linux") // <- illegal: Will clash with 'linux' group
         kotlin.linuxArm64("native") // <-- illegal: Will clash with 'native' group
-        kotlin.macosX64()
+        kotlin.jvm()
 
         project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
             project.checkDiagnostics("KotlinDefaultHierarchyFallbackIllegalTargetNames")
