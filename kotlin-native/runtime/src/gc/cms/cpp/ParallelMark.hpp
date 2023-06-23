@@ -175,14 +175,61 @@ private:
     std::optional<mm::ThreadRegistry::Iterable> lockedMutatorsList_;
     ManuallyScoped<ParallelProcessor> parallelProcessor_;
     //std::mutex workerCreationMutex_;
-    std::atomic<std::size_t> activeWorkersCount_ = 0;
-
+    //std::atomic<std::size_t> activeWorkersCount_ = 0;
 
     class WorkersCount {
+        // TODO assert msgs
+        static const int kDisabled = std::numeric_limits<int>::min();
     public:
+        bool tryInc() noexcept {
+            auto prev = count_.fetch_add(1, std::memory_order_relaxed);
+            if (prev < 0) {
+                // FIXME why 0?
+                //fprintf(stderr, "%d: inc failed: %d < 0\n", konan::currentThreadId(), prev);
+                return false;
+            }
+            if (prev == 0 || prev >= max_) {
+                //fprintf(stderr, "%d: %d++ over the limit %d\n", konan::currentThreadId(), prev, max_);
+                dec();
+                return false;
+            }
+            RuntimeAssert(0 < prev && prev < max_, "TODO");
+            //fprintf(stderr, "%d: %d++\n", konan::currentThreadId(), prev);
+            return true;
+        }
+
+        void dec() noexcept {
+            auto prev = count_.fetch_sub(1, std::memory_order_relaxed);
+            RuntimeAssert(prev > 0, "must be positive");
+            //fprintf(stderr, "%d: %d--\n", konan::currentThreadId(), prev);
+        }
+
+        void reset(int initialCount, int max) noexcept {
+            max_ = max;
+            auto prev = count_.exchange(initialCount, std::memory_order_relaxed);
+            //fprintf(stderr, "%d: reset prev = %d\n", konan::currentThreadId(), prev);
+            RuntimeAssert(prev < 0, "must be negative");
+        }
+
+        void disable() noexcept {
+            auto prev = count_.exchange(kDisabled, std::memory_order_relaxed);
+            //fprintf(stderr, "%d: disable prev = %d\n", konan::currentThreadId(), prev);
+            RuntimeAssert(prev >= 0, "must not be negative");
+        }
+
+        std::size_t get() const noexcept {
+            return count_.load(std::memory_order_relaxed);
+        }
+
+        bool disabled() const noexcept {
+            return count_.load(std::memory_order_relaxed) < 0;
+        }
     private:
-        std::atomic<int>
+        std::atomic<int> count_ = kDisabled;
+        int max_ = 0;
     };
+
+    WorkersCount activeWorkersCount_;
 };
 
 } // namespace kotlin::gc::mark

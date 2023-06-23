@@ -93,6 +93,7 @@ public:
             if (batch_.full()) {
                 bool released = dispatcher_.releaseBatch(std::move(batch_));
                 if (!released) {
+                    RuntimeLogDebug({ "balancing" }, "Overflow");
                     overflowList_.splice_after(overflowList_.before_begin(), batch_.elems_.before_begin(), batch_.elems_.end(), kBatchCapacity);
                     RuntimeAssert(batch_.empty(), "must become empty");
                 }
@@ -114,6 +115,7 @@ public:
                     if (!acquired) {
                         if (!overflowList_.empty()) {
                             auto spliced = batch_.elems_.splice_after(batch_.elems_.before_begin(), overflowList_.before_begin(), overflowList_.end(), kBatchCapacity);
+                            RuntimeLogDebug({ "balancing" }, "Acquired %zu elements from overflow list", spliced);
                             // TODO check size
                             batch_.size_ = spliced;
                         } else {
@@ -193,7 +195,7 @@ private:
 
     void onShare(std::size_t sharedAmount) {
         RuntimeAssert(sharedAmount > 0, "Must have shared something");
-        RuntimeLogDebug({ "balancing" }, "Worker has shared %zu tasks", sharedAmount);
+        // TODO RuntimeLogDebug({ "balancing" }, "Worker has shared %zu tasks", sharedAmount);
         if (waitingWorkers_.load(std::memory_order_relaxed) > 0) {
             waitCV_.notify_all();
         }
@@ -209,6 +211,7 @@ private:
     bool releaseBatch(Batch&& batch) {
         RuntimeAssert(!batch.empty(), "must not be empty"); // TODO assert msgs
         auto size = batch.size_; // TODO remove?
+        RuntimeLogDebug({ "balancing" }, "Releasing batch of %zu elements", size);
         bool enqueued = batches_.enqueue(std::move(batch)); // TODO forward?
         if (!enqueued) {
             return false;

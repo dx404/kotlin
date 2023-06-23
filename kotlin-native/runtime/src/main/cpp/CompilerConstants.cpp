@@ -42,7 +42,7 @@ ALWAYS_INLINE bool compiler::gcMutatorsCooperate() noexcept {
 }
 
 ALWAYS_INLINE uint32_t compiler::auxGCThreads() noexcept {
-    return 0;//Kotlin_auxGCThreads;
+    return Kotlin_auxGCThreads;
 }
 
 ALWAYS_INLINE compiler::WorkerExceptionHandling compiler::workerExceptionHandling() noexcept {
