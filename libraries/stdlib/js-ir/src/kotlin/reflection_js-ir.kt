@@ -17,3 +17,20 @@ internal fun <T : Annotation> KClass<*>.findAssociatedObject(annotationClass: KC
         null
     }
 }
+
+@OptIn(JsIntrinsic::class)
+@ExperimentalJsReflectionCreateInstance
+public fun <T : Any> KClass<T>.createInstance(): T {
+    val jsClass = js.asDynamic()
+
+    if (jsClass === js("Object")) return js("{}")
+
+    val noArgsConstructor = jsClass.`$metadata$`.unsafeCast<Metadata?>()?.defaultConstructor
+        ?: throw IllegalArgumentException("Class \"$simpleName\" should have a single no-arg constructor")
+
+    return if (jsIsEs6() && noArgsConstructor !== jsClass) {
+        js("noArgsConstructor.call(jsClass)")
+    } else {
+        js("new noArgsConstructor()")
+    }
+}

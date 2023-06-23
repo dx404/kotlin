@@ -35348,11 +35348,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/classes/createInstance.kt");
             }
 
-            @TestMetadata("createInstanceByInstance.kt")
-            public void testCreateInstanceByInstance() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/classes/createInstanceByInstance.kt");
-            }
-
             @TestMetadata("declaredMembers.kt")
             public void testDeclaredMembers() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/classes/declaredMembers.kt");

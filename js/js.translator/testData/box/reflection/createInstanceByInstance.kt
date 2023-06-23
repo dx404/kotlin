@@ -1,8 +1,5 @@
-// TARGET_BACKEND: JVM
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: JS_IR_ES6
-// WITH_REFLECT
-// WITH_STDLIB
+// IGNORE_BACKEND: JS
+// KJS_WITH_FULL_RUNTIME
 
 import kotlin.reflect.full.createInstance
 import kotlin.test.assertTrue

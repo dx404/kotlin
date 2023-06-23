@@ -1,5 +1,5 @@
-// TARGET_BACKEND: JVM
-// WITH_REFLECT
+// IGNORE_BACKEND: JS
+// KJS_WITH_FULL_RUNTIME
 
 import kotlin.reflect.full.createInstance
 import kotlin.test.assertTrue
@@ -38,6 +38,12 @@ class SeveralDefaultSecondaries {
 }
 class PrivateConstructor private constructor()
 object Object
+interface Interface
+enum class EnumFoo { A, B }
+
+abstract class AbstractClass
+
+sealed class SealedClass
 
 // -----------
 
@@ -69,6 +75,10 @@ fun box(): String {
     testFail<SeveralDefaultSecondaries>()
     testFail<PrivateConstructor>()
     testFail<Object>()
+    testFail<Interface>()
+    testFail<EnumFoo>()
+    testFail<AbstractClass>()
+    testFail<SealedClass>()
 
     return "OK"
 }
