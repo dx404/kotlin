@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.code
 
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.isTeamCityBuild
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.test.Test
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class ArtifactsTest {
 
@@ -19,6 +21,22 @@ class ArtifactsTest {
     private val mavenLocal = System.getProperty("maven.repo.local")
     private val localRepoPath = Paths.get(mavenLocal, "org/jetbrains/kotlin")
     private val expectedRepoPath = Paths.get("repo/artifacts-tests/src/test/resources/org/jetbrains/kotlin")
+
+    private val excludedProjects = setOf(
+        "annotation-processor-example",
+        "android-test-fixes",
+        "org.jetbrains.kotlin.gradle-subplugin-example.gradle.plugin",
+        "gradle-warnings-detector",
+        "kotlin-compiler-args-properties",
+        "kotlin-gradle-plugin-kpm-android",
+        "kotlin-gradle-plugin-tcs-android",
+        "kotlin-gradle-subplugin-example",
+        "kotlin-java-example",
+        "kotlin-maven-plugin-test",
+        "org.jetbrains.kotlin.test.fixes.android.gradle.plugin",
+        "org.jetbrains.kotlin.test.gradle-warnings-detector.gradle.plugin",
+        "org.jetbrains.kotlin.test.kotlin-compiler-args-properties.gradle.plugin",
+    )
 
     @Test
     fun verifyArtifactFiles() {
@@ -33,9 +51,13 @@ class ArtifactsTest {
             })
         actualPoms.forEach { actual ->
             val expectedPomPath = actual.toExpectedPath()
-            val actualString = actual.toFile().readText().replace(kotlinVersion, "ArtifactsTest.version")
-            assertEqualsToFile(expectedPomPath, actualString)
-            visitedPoms.add(expectedPomPath)
+            if ("${expectedPomPath.parent.fileName}" !in excludedProjects) {
+                val actualString = actual.toFile().readText().replace(kotlinVersion, "ArtifactsTest.version")
+                assertEqualsToFile(expectedPomPath, actualString)
+                visitedPoms.add(expectedPomPath)
+            } else {
+                if (isTeamCityBuild) fail("Excluded project in actual artifacts: $actual")
+            }
         }
 
         val expectedPoms = Files.find(
@@ -46,7 +68,7 @@ class ArtifactsTest {
                         && "${path.fileName}".endsWith(".pom", ignoreCase = true)
             })
         expectedPoms.forEach {
-            assertTrue(it in visitedPoms, "Missing pom for artifacts in actual $it")
+            assertTrue(it in visitedPoms, "Missing actual pom for expected pom: $it")
         }
     }
 
