@@ -433,12 +433,12 @@ object KotlinToolingDiagnostics {
         operator fun invoke(project: Project, sourceSetsWithDependsOnEdges: Iterable<KotlinSourceSet>) = build(
             """
                 The Default Kotlin Hierarchy was not applied to '${project.displayName}':
-                Manual .dependsOn() edges were configured for the following source sets: 
+                Manual .dependsOn() edges were configured for the following source sets:
                 ${sourceSetsWithDependsOnEdges.toSet().map { it.name }}
                 
-                To suppress the 'Default Hierarchy Template' add 
+                To suppress the 'Default Hierarchy Template' add
                     '$KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE=false'
-                 to your gradle.properties
+                to your gradle.properties
             """.trimIndent()
         )
     }

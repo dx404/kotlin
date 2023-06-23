@@ -4,4 +4,4 @@ Manual .dependsOn() edges were configured for the following source sets:
 
 To suppress the 'Default Hierarchy Template' add
     'kotlin.mpp.applyDefaultHierarchyTemplate=false'
- to your gradle.properties
+to your gradle.properties
