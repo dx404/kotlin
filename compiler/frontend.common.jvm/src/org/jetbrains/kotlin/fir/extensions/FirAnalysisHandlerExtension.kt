@@ -8,11 +8,17 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
+enum class FirAnalysisResult {
+    Success,
+    Error,
+    Skipped
+}
+
 abstract class FirAnalysisHandlerExtension {
     companion object : ProjectExtensionDescriptor<FirAnalysisHandlerExtension>(
         "org.jetbrains.kotlin.fir.firAnalyzeCompleteHandlerExtension",
         FirAnalysisHandlerExtension::class.java
     )
 
-    abstract fun doAnalysis(configuration: CompilerConfiguration): Boolean
+    abstract fun doAnalysis(configuration: CompilerConfiguration): FirAnalysisResult
 }
