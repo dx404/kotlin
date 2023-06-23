@@ -211,6 +211,9 @@ var KmFunction.visibility: Visibility by visibilityDelegate(KmFunction::flags)
  * Represents modality of the corresponding function.
  *
  * Modality determines when and where it is possible or mandatory to override a declaration.
+ * For additional details, see [Modality].
+ *
+ * [Modality.SEALED] is not applicable for [KmFunction] and setting it as a value results in undefined behavior.
  */
 var KmFunction.modality: Modality by modalityDelegate(KmFunction::flags)
 
@@ -271,6 +274,9 @@ var KmProperty.visibility: Visibility by visibilityDelegate(KmProperty::flags)
  * Represents modality of the corresponding property.
  *
  * Modality determines when and where it is possible or mandatory to override a declaration.
+ * For additional details, see [Modality].
+ *
+ * [Modality.SEALED] is not applicable for [KmProperty] and setting it as a value results in undefined behavior.
  */
 var KmProperty.modality: Modality by modalityDelegate(KmProperty::flags)
 
@@ -361,6 +367,9 @@ var KmPropertyAccessorAttributes.visibility: Visibility by visibilityDelegate(Km
  * Represents modality of the corresponding property accessor.
  *
  * Modality determines when and where it is possible or mandatory to override a declaration.
+ * For additional details, see [Modality].
+ *
+ * [Modality.SEALED] is not applicable for [KmPropertyAccessorAttributes] and setting it as a value results in undefined behavior.
  */
 var KmPropertyAccessorAttributes.modality: Modality by modalityDelegate(KmPropertyAccessorAttributes::flags)
 
