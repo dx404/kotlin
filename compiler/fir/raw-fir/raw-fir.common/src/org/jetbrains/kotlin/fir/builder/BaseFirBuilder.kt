@@ -1030,22 +1030,22 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     }
 }
 
-fun <T> FirRegularClassBuilder.createDataClassCopyFunction(
+fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDataClassCopyFunction(
     classId: ClassId,
-    sourceElement: T,
+    sourceElement: TSource,
     dispatchReceiver: ConeClassLikeType?,
-    zippedParameters: List<Pair<T, FirProperty>>,
+    zippedParameters: List<Pair<TParameter, FirProperty>>,
     createClassTypeRefWithSourceKind: (KtFakeSourceElementKind) -> FirTypeRef,
     createParameterTypeRefWithSourceKind: (FirProperty, KtFakeSourceElementKind) -> FirTypeRef,
-    toFirSource: (T?, KtFakeSourceElementKind) -> KtSourceElement?,
-    addValueParameterAnnotations: FirValueParameterBuilder.(T) -> Unit,
-    isVararg: (T) -> Boolean,
+    toFirSource: (TBase?, KtFakeSourceElementKind) -> KtSourceElement?,
+    addValueParameterAnnotations: FirValueParameterBuilder.(TParameter) -> Unit,
+    isVararg: (TParameter) -> Boolean,
 ): FirSimpleFunction {
     fun generateComponentAccess(
         parameterSource: KtSourceElement?,
         firProperty: FirProperty,
         classTypeRefWithCorrectSourceKind: FirTypeRef,
-        firPropertyReturnTypeRefWithCorrectSourceKind: FirTypeRef
+        firPropertyReturnTypeRefWithCorrectSourceKind: FirTypeRef,
     ) =
         buildPropertyAccessExpression {
             this.source = parameterSource
