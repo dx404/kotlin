@@ -487,10 +487,10 @@ kotlin {
 }
 
 tasks {
-    metadataJar {
+    val metadataJar by existing(Jar::class)  {
         archiveAppendix.set("metadata")
     }
-    sourcesJar {
+    val sourcesJar by existing(Jar::class) {
         archiveAppendix.set("metadata")
     }
     val jvmJar by existing(Jar::class) {
