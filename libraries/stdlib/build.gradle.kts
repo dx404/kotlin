@@ -764,6 +764,10 @@ publishing {
             variant("metadataApiElements")
             variant("metadataSourcesElementsFromJvm") {
                 name = "metadataSourcesElements"
+                configuration {
+                    // to avoid clash in Gradle 8+ with metadataSourcesElements configuration with the same attributes
+                    isCanBeConsumed = false
+                }
                 attributes {
                     copyAttributes(from = project.configurations["metadataSourcesElements"].attributes, to = this)
                 }
