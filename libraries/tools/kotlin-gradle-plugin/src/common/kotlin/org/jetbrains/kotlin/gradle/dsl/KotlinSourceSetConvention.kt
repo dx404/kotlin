@@ -36,7 +36,6 @@ import kotlin.reflect.KProperty
  * }
  * ```
  */
-@Suppress("UnusedReceiverParameter") // Diagnostic is wrong
 @ExperimentalKotlinGradlePluginApi
 object KotlinSourceSetConvention :
     ReadOnlyProperty<NamedDomainObjectContainer<KotlinSourceSet>, NamedDomainObjectProvider<KotlinSourceSet>> {
@@ -58,6 +57,7 @@ object KotlinSourceSetConvention :
      * @return the stacktrace when the user was using a [KotlinSourceSetConvention] that indeed created/registered a new SourceSet.
      * This will be null if SourceSet already existed and was referenced using the convention, or of no convention was used at all.
      */
+    @Suppress("UnusedReceiverParameter") // Diagnostic is wrong
     internal var KotlinSourceSet.isRegisteredByKotlinSourceSetConventionAt: Trace?
             by extrasReadWriteProperty("isRegisteredByKotlinSourceSetConvention")
         private set
