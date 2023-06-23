@@ -15,7 +15,8 @@ interface KotlinHierarchyDsl {
     /**
      * Will apply the given [template] to the project.
      *
-     * #### Example: Manually apply the default hierarchy (see KotlinMultiplatformExtension.applyDefaultHierarchyTemplate)
+     * #### Example: Manually apply the default hierarchy
+     * (see KotlinMultiplatformExtension.applyDefaultHierarchyTemplate)
      * ```kotlin
      * kotlin {
      *     applyHierarchyTemplate(KotlinHierarchyTemplate.default)
