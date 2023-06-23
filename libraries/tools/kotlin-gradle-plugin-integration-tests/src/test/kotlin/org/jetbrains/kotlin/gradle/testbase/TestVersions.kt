@@ -78,6 +78,6 @@ interface TestVersions {
     }
 
     object ThirdPartyDependencies {
-        const val SHADOW_PLUGIN = "8.1.1"
+        const val SHADOW_PLUGIN_VERSION = "8.1.1"
     }
 }
