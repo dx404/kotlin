@@ -73,6 +73,7 @@ sealed class CodeFragmentCapturedValue(val name: String, val isMutated: Boolean,
     }
 
     class ContextReceiver internal constructor(
+        val index: Int,
         labelName: Name,
         isCrossingInlineBounds: Boolean,
     ) : CodeFragmentCapturedValue(labelName.asString(), isMutated = false, isCrossingInlineBounds) {

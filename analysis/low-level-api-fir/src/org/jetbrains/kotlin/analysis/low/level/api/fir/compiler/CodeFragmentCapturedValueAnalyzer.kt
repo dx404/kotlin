@@ -119,12 +119,14 @@ private class CodeFragmentCapturedValueVisitor(
                             }
                         }
                         is FirFunctionSymbol<*> -> {
-                            if (element.contextReceiverNumber >= 0) {
-                                val contextReceiver = symbol.resolvedContextReceivers[element.contextReceiverNumber]
+                            val contextReceiverNumber = element.contextReceiverNumber
+                            if (contextReceiverNumber >= 0) {
+                                val contextReceiver = symbol.resolvedContextReceivers[contextReceiverNumber]
                                 val labelName = contextReceiver.labelName
                                 if (labelName != null) {
                                     val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-                                    val capturedValue = CodeFragmentCapturedValue.ContextReceiver(labelName, isCrossingInlineBounds)
+                                    val capturedValue = CodeFragmentCapturedValue
+                                        .ContextReceiver(contextReceiverNumber, labelName, isCrossingInlineBounds)
                                     register(symbol, CodeFragmentCapturedSymbol(capturedValue, symbol, contextReceiver.typeRef))
                                 }
                             } else {
