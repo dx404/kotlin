@@ -62,7 +62,7 @@ internal suspend fun Project.setupDefaultKotlinHierarchy() = requiredStage(Final
 private suspend fun Project.illegalTargetNamesUsed(): Set<String> {
     val targets = multiplatformExtension.awaitTargets()
     val targetNames = targets.map { it.name }.toSet()
-    return multiplatformExtension.awaitTargets().flatMap { it.compilations }.mapNotNull { compilation ->
+    return targets.flatMap { it.compilations }.mapNotNull { compilation ->
         val hierarchy = KotlinHierarchyTemplate.default.buildHierarchy(compilation) ?: return@mapNotNull null
         val nodeNames = hierarchy.childrenClosure.mapNotNull { it.node as? KotlinHierarchy.Node.Group }.map { it.name }.toSet()
         nodeNames.intersect(targetNames)
