@@ -74,16 +74,12 @@ private suspend fun Project.illegalTargetNamesUsed(): Set<String> {
  * edges from 'main' compilations defaultSourceSets to 'commonMain' and
  * edges from 'test' compilations defaultSourceSets to 'commonTest
  */
-private fun Project.setupPreMultiplatformStableDefaultDependsOnEdges() = multiplatformExtension.targets.all { target ->
-    project.launchInStage(FinaliseRefinesEdges) {
-        /* Only setup default refines edges when no KotlinTargetHierarchy was applied */
-        if (project.multiplatformExtension.hierarchy.appliedTemplates.isNotEmpty()) return@launchInStage
-
-        target.compilations.forEach { compilation ->
-            val sourceSetTree = KotlinSourceSetTree.orNull(compilation) ?: return@forEach
-            val commonSourceSetName = lowerCamelCaseName("common", sourceSetTree.name)
-            val commonSourceSet = multiplatformExtension.sourceSets.findByName(commonSourceSetName) ?: return@forEach
-            compilation.defaultSourceSet.dependsOn(commonSourceSet)
-        }
+private suspend fun Project.setupPreMultiplatformStableDefaultDependsOnEdges() = multiplatformExtension.targets
+    .flatMap { target -> target.compilations }
+    .forEach { compilation ->
+        val sourceSetTree = KotlinSourceSetTree.orNull(compilation) ?: return@forEach
+        val commonSourceSetName = lowerCamelCaseName("common", sourceSetTree.name)
+        val commonSourceSet = multiplatformExtension.sourceSets.findByName(commonSourceSetName) ?: return@forEach
+        compilation.defaultSourceSet.dependsOn(commonSourceSet)
     }
-}
+
