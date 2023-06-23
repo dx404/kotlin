@@ -163,6 +163,7 @@ var KmClass.isFunInterface: Boolean by classBooleanFlag(Flag(ProtoFlags.IS_FUN_I
  * Indicates that the corresponding enum class has synthetic ".entries" property in bytecode.
  *
  * Always `false` if [KmClass.kind] is not an enum.
+ * Enum classes always have enum entries property starting from Kotlin 1.9.0.
  */
 var KmClass.hasEnumEntries: Boolean by classBooleanFlag(Flag(ProtoFlags.HAS_ENUM_ENTRIES))
 
