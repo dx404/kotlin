@@ -128,13 +128,14 @@ private class CodeFragmentCapturedValueVisitor(
                                     register(symbol, CodeFragmentCapturedSymbol(capturedValue, symbol, contextReceiver.typeRef))
                                 }
                             } else {
-                                val labelName = element.labelName ?: (symbol as? FirAnonymousFunctionSymbol)?.label?.name
+                                val labelName = element.labelName
+                                    ?: (symbol as? FirAnonymousFunctionSymbol)?.label?.name
+                                    ?: symbol.name.asString()
+
                                 val typeRef = symbol.receiverParameter?.typeRef ?: error("Receiver parameter not found")
-                                if (labelName != null) {
-                                    val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-                                    val capturedValue = CodeFragmentCapturedValue.ExtensionReceiver(labelName, isCrossingInlineBounds)
-                                    register(symbol, CodeFragmentCapturedSymbol(capturedValue, symbol, typeRef))
-                                }
+                                val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
+                                val capturedValue = CodeFragmentCapturedValue.ExtensionReceiver(labelName, isCrossingInlineBounds)
+                                register(symbol, CodeFragmentCapturedSymbol(capturedValue, symbol, typeRef))
                             }
                         }
                     }
