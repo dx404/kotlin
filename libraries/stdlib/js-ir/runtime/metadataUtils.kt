@@ -111,6 +111,7 @@ internal external interface Metadata {
     val iid: Int?
 
     var `$kClass$`: dynamic
+    val defaultConstructor: dynamic
 
     var errorInfo: Int? // Bits set for overridden properties: "message" => 0x1, "cause" => 0x2
 }
